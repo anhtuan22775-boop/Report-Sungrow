@@ -5,6 +5,6 @@
    Để trống 1 trong 2 dòng -> web tự chạy chế độ dùng thử.
    ===================================================================== */
 window.APP_CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbzfCmQbOqjXTO0mVoC6YSodSSC5dc8jV8Fc-V-nz81XapWRbiFOo25A4PlAvei1YTXRcQ/exec',
-  GOOGLE_CLIENT_ID: 'https://script.google.com/macros/s/AKfycbyqedaWh8aWvY3T6LwMgaiH6VUpMVgA6LuFJ0v4LLI0cM7oAa_v_sVmUhIgriKXreIlUw/exec'
+  API_URL: 'https://script.google.com/macros/s/AKfycbyqedaWh8aWvY3T6LwMgaiH6VUpMVgA6LuFJ0v4LLI0cM7oAa_v_sVmUhIgriKXreIlUw/exec',
+  GOOGLE_CLIENT_ID: '1009102408042-flp8v92qq86lo8tskidoa6nvegu5bckd.apps.googleusercontent.com'
 };
