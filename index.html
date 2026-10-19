@@ -364,7 +364,9 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
 .gate-h h1{font-size:clamp(20px,2vw,24px);font-weight:700;line-height:1.25}
 @media (min-width:1100px){.gate-h h1{white-space:nowrap}}
 .gate-hello{margin:0;color:var(--muted);font-size:15px}
-.acct{display:flex;align-items:center;gap:12px;max-width:375px;min-width:0;border:1px solid var(--line-2);border-radius:10px;padding:10px 14px;background:var(--card)}
+.acct{display:flex;align-items:center;gap:12px;max-width:375px;min-width:0;border:1px solid var(--line-2);border-radius:10px;padding:10px 14px;background:var(--card);color:var(--ink);text-decoration:none;cursor:pointer}
+.acct:hover{border-color:var(--sun);background:var(--sun-soft)}
+.acct:hover .acct-g{border-color:var(--sun);color:var(--sun-ink)}
 .acct .av{width:36px;height:36px;font-size:15px;margin:0;border:0;flex:none}
 .acct-t{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3}
 .acct-t b{font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -446,7 +448,7 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
       <div class="gate-main">
         <div class="gate-h"><img class="gate-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABaCAYAAABHeVPzAAAPeUlEQVR42u2df4xc1XXHP+fe92Z29vcuxsSE0GBiREyitIGIlhZBVCJV6n+ki1QSRCMV0j+SRkAgdlVpdqoUMAHRqFWVWo2ipEJNvI2SlDRV1NBAk6BWhQbUekEgIEBsg+14f8/OzHv3nv5x38zOen95d2e9gN+RVvt29s37cb7nnnvOueeeI5whKQgKjCIAY+PITWO45c6duYudLqZfDb2RYxAwDWWnsVwsynkCJRV6gV71DApcBPQrxCKgis3u1iJRpPmZrvGsssI5Ej5WBS9KivBLVU5imEGZFqipZ06FX1rhVS/Me6UWeyZTR3XWc/zih5lfljflwBdGUaR1rzVJ1mT6CAZAlmH2C2X6d9bZ41PebyLegzCMcomH3UbZgTDYHdNnBUQg9eB10fVRDZ83j1d8UFl4WL/CeUaWXnu56xgg9fjIYIwJ121+VwQiAZ9dZC7Bq3JSYUrgFRFe8/AaMGHg+YLyQvcBXluOd4+XsdeDl0q43LoA0BEsh/DSlLoyXSerDBcsH/aeGxA+IsKFwKARBnsLICbcuZFCquA8OMUFJDN+SHZPbd1bzkwcoImBriBdbRiteE7bbbyGZ5C2Z9NF3woXtJEJABUsWLvwjtWEmhEmFd4QeF6VnyYJj0kfR3dUmG49S5mIUZzI0meS5YZSO2JT+7gauNorf2CED3no644RySQx9ZkEK6418oOyCC8na7H1rU0K2gaLiuBRRMFYg2mCIwL1NCCpcNgYfqSef9c6Px18mFMA5XLQJpU2/kobSqbJeD2EnX6GTzjPzUb57YESvfU0u0FgvLbpOMkk5W3N6I2CI9qm6TJhKxikuwDzCaA823D8EOHvBu/nZYAfl4k+WiFtAdDGfDn1BT5hhH1WuKK7AHMNcJ5UwtkROa0NTBgxDjC9RYwq1FKmDHytVuPBHQ9zREewMoaTJvNP3sNFkfDFUsytqUISpN0B5u2uRrZZfXlArMH0FWA24dXE8bnhA3xPy9ncP30P71fDI6WI35hPaPhgDuZM7zAeXkkiS1ww+Fqdzwx+ia/Ia3dQ6o35wVCJ66dqNFSIz0V9frbIK84IRsA7x42mr4tP9ha5fqKGQyjkzN9aMoL1CtZgxfBQJMpvZlbNtjI+05dn4uhuigTQTL1u1zsbQVIPIrwvAlJZ2XvvFBNbM0rzpaXNYzUSHkqy383/yxn77Cs/0CLPuBmH0Ox32zl6+nssfKirvcdmKWrzSDdqcnkRnCrGGKw1EBuk6dq75gu3v3x2rIq3BuOVee85BcwoTGUOXEOVarv6RNYhJIrJGCYSjg1QEuhSYVChV2AAiFuAS+ZU0RKGIBgZComDJDidqpBm1zebAWOzdr0rRthSAeM9zNRoJHAi8VQNTClMobyM8BIw5RxTKrwSeU6YHqaYAfoCc1NIz5vF/aI3xJySU+ie4eWDfeuhp48hVwJcCb94EvveYeRkRBQ1sFLCSjEwL56lr1ZkIPVcbJVhAkgXArtF6VdhBzCoykDBMtxdJHIOZhqoKrpRq3FTAPTE2NmEF9MaP3HKYSM8rwnPDcJxeYi5t+AcmKzyv5PZ72dWOuGN/VzQ5XhPAz6QVtmNcC1wXSFCGm5j82iEILp+1ep6YmSuzl+4iL8fupcjS84pYxhHxoCRvW2qY7QVL9pcqHb908CZnTx62m3Hs7/H8HIfbwJvAk8BHLuLnlLMb6WOg0XLJfUULxLiPVs2AlRRY7DVBrVE+eb593JEbw96lBvwHEapoCuGYCtnV+Rl/SfrCtiIKjJ2E2ZkL3J4HLMrjPIfTezjv0pxACCba7ZYBSmoEMcxfVrG8DgqT5By8J1rv8tCAN21AMmim1M1Chs2STejTyNDIhU8O7fWdn/LUnOky8bffzMASOJzr3nTTlnOgm1Ua5IDsJ1zCt4znwOwPeQjgwJP5QBsAzlFixGC8mNDiITmdLZEX3HdEXa2wYR4vpGPgLNIqqQFi1VI1HPX4IO8lANwdhjvUdKBLqLUMzWX8rmhB/ialjF5lsPWMb0ZdZfuGFOwmMk630GpnH+AZ5vJEDkAHec8HsFZQ1y0iArUE342l3LveffzA1icg5UD0DnGK4KLDFFPETNdY76W8KSN+av+U/xQDpIsl3mYA9AJywYMEdLtKc4nvDFR5VExfGvoAI+18DmE5aalibo5AJ0JKVRn5nhGlS9ryhPDD/EKZAnOe0PATm5afnUvB2DjoQTVbAVhsMpnnp5n7qqDYcVNyxiuQFZietBYQR3lAGwSBAD5MpMtxgNSCTnMyzI+nGOkQkoFzQHoyPwb9histhEjk3grISvaH7uLnlKRK3IAOjgSVpT4SpbOXyF9Yx+7i3AdyqfUcXUOwNY5YsJoS+KZ/DyXEnEbMNJbYLdTqCa5Ctoa5pcxInggPb6Py3oNf1J3fLo7otspzDRak7PZUFpKTqtIvYBU8EfuZEdPkXtE+VQpZkcSJN5nZqvNzdAtYL5IME2n93NbbPjzYsTF1QQmajgj2OVyhnIAOkDlMoZR0DLFyTpf7Yq42TmYrpEqGNMm8adTHo7ugAl6RcieM1M1HhkscnOtgUs8CUK0Vqac2cSd84U0gHKoGDDZ4M6+Lm6cqpOKYE2Wdb0WbQgACcn7ierKjsc5Iv1GKvjp/Zwvns/XU7yGVPgzztTaCAAaGTDKsaILG5DZe45mxt0edLtXRhCG6imsNzl3/QAIrhSDCs92P8CRcubpnYv8P7yrVTrhsoEeIlj/fob1WkFqQOYTvIdHBfSpY0Syet79O3byZbzF8KFMGa97XlzXCHAe11cgqiWMDxX5R4ArDwZX+5ykscyxgp6N6oAzAkAVr4of7iaaSzkaF7hZKjRUQxQwN4U2TmaNYeZUcaU4lCtopDxaT7mh74v8bzmUMMiZvxUAZBKfliLsQBFbS3kOuOXen3Djjgd4TsuYCue2CdopitpSE70q3ghRIcLEFlNv8H/z8PVqkb99dyVsGT00gpXK5ncv5pQBoISsrcgSdVmYTdCG4+dpwleqln9+V9iY1splWalOXE4bBMAIfYUiUbXK0TnPkwpf/7eX+Ncmo/V2Yg6SrrbcltNmVJDhscl5nrXC9/vvY7w1DywsMCc5m7aOFteMO4Tl8OqLyy1wxhE5h9WRLtS80Ml9/NNAFx+fnCeVdVYVi5qMHxuDVfNYwhqnSGVtgHJaJwBrMf7pTxOJEErQAZN3cxWGW8TzNwNf4sVyGVPJQdk4AKupmmxxOXnubvouhOu8cLdYPhIbSo2ERwBGx5FKzsvOANCslitjOKlkCUQxt1rhD0sxv1N3oU5oPSUhOofjQFsBQJuedy98luK7+rhFPHcUC+w1wGydNKs2ZQAr+UbtzgHQpm50Zj8fU7ivaLlSDcw1svLDYYZXAdE8CNc5ADQLL8zs5wKnPGgNnxSBuTpeJMtjyWV9i0IRIZ/Fzf4Zv54qhwaK7Jms41EwJs+a2GoyIuiJu7mwnvLtnpg9k3XqhJppOfPPBgAAsaU8XGL3TJ1UyAu3nlUVNL2fywVG5hr4rHiHWdMHF1AhUZNHRjc9Arzyod4iQ4lbf72znDqjgi5vONpKkuZ0VgFQZdeZ1zHMqfNWUJ6gu/1WUE7b6QlvfIeMwWWlG49hNNRI4J2eJ9TqGbZQ0NWxiQyR9W/QyDgsEGGx2eKM52AI5uko0dPHkJld6IlxdGQvOgqMVhY1/nlrMzkLSgJwBcJhhGMIE3gZw7Xnwr7wWYrAkN9gamK0Af6LKhpZxDm+emo/ByLHz1PhqAhTsHyIukK25Dm2+PMlpY3PIo2NIyPNP5oHh7NWVSsIy6ER7O/tZcg43u0d1zjPLVa4eqaOyio7YVbk5+QXOFiKua2arN8PKNjwM9dgRpVnEF708LIob1rDSa+8Lo5p281Mb4U33i5qZqLMYFJnZ8kTN+AiI+wywg4PuyVUVH8vcNlAF6X5BBqbcEc3tUesnqJ1h7dCX1fMtbHhWq+hzn7N4QSm1VBL6zQm9zGrMGdgxoeeAzV1nBLDBDCRVZ9NEaYzneqzpLF6Kswbj0NRjUhorkMY1KakTihg8REYlxIDXgxFgS7vicRgPRgDXqCg0IcyqNAtwk5V+kUoAd1ApHV6Y+hJw06X/kJEsTvO1K8PDK87mJzffJepTQGQ3dg6j1aTwLCsHaA1grWGoWaXOZs1RGh2rhBAo8U9H0/rYtE6sMCiwW0Wv8Gif0UsKGNZ+F6rRYguNGpo2uHt/UxU25pOZMeNFG2koRVhFj0WDYy3mx1tHdkl2QSiKQcqqAf1bglfV5hWVvyr/aN1SdmqC0a6zFF4D9W2vW+tfjOSGR1k27PoWGl9jRS8185Ogq1oqmyfh71qRHeV9qEirCUPnTJnVbJg3OO+2dJQ82XGs+RLuFKECPyPmS7x3brj24MljBFSn4Ow1dxPuyw2cUw7x10CMLmPIeAf+or8frN5J4LNF2Y66tx5EbQUYRuOXyWeW4cP8C9WFSl9jPkP/ynfuuh1Zo3hqt4CPc4jXjNz8B3QF3i7mA54YzBFixQizHzKd73yx8MH+I9WM09VxIRCE5y4k8vjUOXj410x/VagmmSdscMQyrurrmZ5Bd/FqyBFiy1GIZ/KwTORcn9fle/LX1Nv7reQRUGmLCMO4M07eF+hwB9Fht9NPR/oK9Krwfki8Yu6TC8YDOdGY2fVBQN2SVPrgoWuKPgPc3VeVeFnRvnmwAEebV0g6yW8rJW1qMQWoLfTPT3MB4GrnfJRET5YsFwqBOdKpNU7fqG1uQRkNYwW9G3W3nxRp2xZImzWGqTZytxIcNpc8JAbKhw2whMo/4nlqcG/5KVFUdTTgpKyRkSwVXKriRy76Z0WLvfKNQLXIOwBzkPpF0N/XwEka3zvszzSJjjOn9Z3fumbS5vX2lm42iV2ud2diyXaxhaxQqi6YRe4Nd8IebECpxRmBI5g+G/1PCnCs/Uixy+oMNvOszFgpa1dcgbjTbgJs9pFpvdzvndcguFShF/L4iy7FC40cD6hYeF5vQUGbBZGyEYLsLi/ZDZimr3rWd5nXZvXcpoL3ezXom0OV3sTSGsWwhMzdXDKcVWmRPiVwFFVjiJMIrzmlSMWnh84xetycOkOIgV5vIy9nqWVctcNwOkXbr1hW8e5lW6iZbqOzzFYUEpRgb7Us8MpViIi8ezJgOoSQ8kqJa8MisGopw+hNxtZcWaJFc9UhakixpB4T5qFe6oKU2KYUKUmUFWlqlCzMK/CDMLrOE5gwUE1tpyanafaHTM9eD8TK93r0Ai2FU4fDWN4Pese/w82k+UzwNiZEgAAAABJRU5ErkJggg==" alt=""><h1>Chào mừng đến với Service Center</h1></div>
         <p class="gate-hello" id="gHello"></p>
-        <div class="acct"><span class="av" id="gAv"></span><span class="acct-t"><b id="gName"></b><small id="gMail"></small></span><span class="acct-g">Tài khoản Google</span></div>
+        <a class="acct" id="gAcct" href="#" target="_top" title="Bấm để chọn tài khoản Google khác"><span class="av" id="gAv"></span><span class="acct-t"><b id="gName"></b><small id="gMail"></small></span><span class="acct-g">Đổi tài khoản ▾</span></a>
         <div class="gate-step" id="gOk" hidden>
           <div class="gate-today" id="gToday"></div>
           <button type="button" class="btn primary wide" id="gEnter">Vào làm việc</button>
@@ -1807,6 +1809,7 @@ function setAcct(name, email){
   $('#gMail').textContent = email || '';
   const sw = $('#gSwitch');
   sw.hidden = !G.appUrl;
+  $('#gAcct').href = G.appUrl ? 'https://accounts.google.com/AccountChooser?continue=' + encodeURIComponent(G.appUrl) : '#';
   if (G.appUrl) sw.href = 'https://accounts.google.com/AccountChooser?continue=' + encodeURIComponent(G.appUrl);
 }
 function showGate(mode, email){
@@ -1865,6 +1868,7 @@ $('#gWhoOk').onclick = async () => {
   finally { b.disabled = false; }
 };
 $('#gPolicyBtn').onclick = () => { const p = $('#gPolicy'); p.hidden = !p.hidden; $('#gPolicyBtn').setAttribute('aria-expanded', String(!p.hidden)); };
+$('#gAcct').addEventListener('click', e => { if (!G.appUrl) { e.preventDefault(); toast('Bản dùng thử: khi chạy thật, bấm vào đây để chọn tài khoản Google khác.'); } });
 $('#whoami').addEventListener('click', () => { if (S.user && S.user.name) showGate('ok'); });
 
 /* ---------- Khởi động ---------- */
@@ -1903,7 +1907,7 @@ async function boot(){
 const Demo = (function(){
   const ADMIN = 'Quản lý', STAFF = 'Nhân viên';
   const PPL = ['Bùi Nguyễn Anh Tuấn', 'Nguyễn Minh Châu', 'Nguyễn Nhật Cảnh'];
-  const ME = 'tuan.service@gmail.com', CHAU = 'chau.service@gmail.com', CANH = 'canh.service@gmail.com';
+  const ME = 'anhtuan22775@gmail.com', CHAU = 'chau.service@gmail.com', CANH = 'canh.service@gmail.com';
   let role = ADMIN, seq = 0, nextNo = 1;
   const db = {
     cats: { types: ['CSKH_TV','CSKH_XLL','HTKT','WSHCM','Nhận hàng','Kiểm tra','Sửa chữa','Đóng gói','Test','Gửi hàng'],
