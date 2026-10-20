@@ -84,6 +84,9 @@ main{max-width:1180px;margin:0 auto;padding-block:16px 104px;
 .field{display:flex;flex-direction:column;gap:8px;min-width:0}
 .lbl{font-size:13px;font-weight:600;color:var(--ink-2)}
 .lbl small{margin-left:4px}
+.f.via{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--ink-2);min-width:0;grid-column:1/-1}
+.f.via .chip{font-weight:500}
+label.f textarea{resize:vertical}
 label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--ink-2);min-width:0}
 input[type=text],input[type=email],input[type=date],input:not([type]),select,textarea{
   width:100%;border:1px solid var(--line-2);border-radius:10px;background:var(--card);padding:10px 12px;font-size:16px;font-weight:400;color:var(--ink);min-height:44px}
@@ -294,7 +297,7 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
 
 /* ---------- Tab Cài đặt ---------- */
 .cat-grid{display:grid;gap:12px}
-@media (min-width:900px){.cat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:900px){.cat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .catbox{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .catbox h3{font-size:14px}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
@@ -624,6 +627,8 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
           <form class="addtag" data-cat="statuses"><input type="text" id="addStatuses" placeholder="Thêm trạng thái"><button class="btn sm">Thêm</button></form></div>
         <div class="catbox"><h3>Nhân sự</h3><div class="tags" data-cat="people"></div>
           <form class="addtag" data-cat="people"><input type="text" id="addPeople" placeholder="Thêm nhân sự"><button class="btn sm">Thêm</button></form></div>
+        <div class="catbox"><h3>Liên hệ qua</h3><div class="tags" data-cat="vias"></div>
+          <form class="addtag" data-cat="vias"><input type="text" id="addVias" placeholder="Thêm kênh liên hệ"><button class="btn sm">Thêm</button></form></div>
       </div>
     </div>
 
@@ -767,14 +772,14 @@ const fail = e => toast(errMsg(e), { err: true, ms: 6000 });
 
 /* ---------- Trạng thái ứng dụng ---------- */
 const S = {
-  user: null, cats: { types: [], statuses: [], people: [] }, templates: [], users: [],
+  user: null, cats: { types: [], statuses: [], people: [], vias: [] }, templates: [], users: [],
   day: todayISO(), dayItems: [], listItems: [], listRange: null, tab: 'entry'
 };
 
 /* ---------- Form công việc (dùng chung cho Nhập việc và cửa sổ Sửa) ---------- */
 function JobForm(root, pfx){
   this.root = root; this.pfx = pfx; this.ro = false;
-  this.st = { type: '', status: '', people: [] };
+  this.st = { type: '', status: '', people: [], via: '' };
   root.innerHTML =
     '<div style="display:flex;flex-direction:column;gap:14px">' +
     '<div class="field"><div class="lbl">Loại việc</div><div class="choices" data-k="type"></div></div>' +
@@ -786,7 +791,8 @@ function JobForm(root, pfx){
       '<div class="cust-grid">' +
         '<label class="f">Công ty<input type="text" id="' + pfx + 'Company" placeholder="Tên công ty / đại lý"></label>' +
         '<label class="f">Người liên hệ<input type="text" id="' + pfx + 'Cname" placeholder="Tên người liên hệ"></label>' +
-        '<label class="f wide">Ghi chú<input type="text" id="' + pfx + 'Contact" placeholder="VD: 0834853797 Qua Sim Hotline - Inverter …"></label>' +
+        '<div class="f via"><span>Liên hệ qua</span><div class="choices" data-k="via"></div></div>' +
+        '<label class="f wide">Ghi chú<textarea id="' + pfx + 'Contact" rows="2" placeholder="VD: 0834853797 – Inverter SG110CX báo lỗi 039"></textarea></label>' +
       '</div></details></div>';
   root.addEventListener('click', e => {
     const b = e.target.closest('[data-v]');
@@ -797,7 +803,8 @@ function JobForm(root, pfx){
       if (i >= 0) this.st.people.splice(i, 1);
       else if (this.st.people.length < 3) this.st.people.push(v);
       else { toast('Chỉ chọn tối đa 3 người.'); return; }
-    } else this.st[k] = v;
+    } else if (k === 'via') this.st.via = this.st.via === v ? '' : v;
+    else this.st[k] = v;
     this.paint();
   });
 }
@@ -808,6 +815,10 @@ JobForm.prototype.paint = function(){
   const types = withExtra(c.types, [st.type]);
   const stats = withExtra(c.statuses, [st.status]);
   const ppl = withExtra(c.people, st.people);
+  const vias = withExtra(c.vias || [], [st.via]);
+  $('[data-k=via]', this.root).innerHTML = vias.map(t =>
+    '<button type="button" class="chip' + (t === st.via ? ' on' : '') + '" data-v="' + esc(t) + '" aria-pressed="' + (t === st.via) + '">' + esc(t) + '</button>').join('') ||
+    '<span class="hint">Quản lý thêm kênh liên hệ trong Cài đặt.</span>';
   $('[data-k=type]', this.root).innerHTML = types.map(t =>
     '<button type="button" class="chip' + (t === st.type ? ' on' : '') + '" data-v="' + esc(t) + '" aria-pressed="' + (t === st.type) + '">' + esc(t) + '</button>').join('');
   const seg = $('[data-k=status]', this.root);
@@ -824,25 +835,31 @@ JobForm.prototype.get = function(){
   return {
     type: this.st.type, status: this.st.status, people: this.st.people.slice(),
     desc: this.el('Desc').value.trim(), company: this.el('Company').value.trim(),
-    cname: this.el('Cname').value.trim(), contact: this.el('Contact').value.trim()
+    cname: this.el('Cname').value.trim(), contact: this.el('Contact').value.trim(), via: this.st.via
   };
 };
 JobForm.prototype.set = function(o){
-  this.st = { type: o.type || '', status: o.status || '', people: (o.people || []).slice(0, 3) };
+  this.st = { type: o.type || '', status: o.status || '', people: (o.people || []).slice(0, 3), via: o.via || '' };
   this.el('Desc').value = o.desc || '';
   this.el('Company').value = o.company || ''; this.el('Cname').value = o.cname || ''; this.el('Contact').value = o.contact || '';
-  this.el('Cust').open = !!(o.company || o.cname || o.contact);
+  this.el('Cust').open = !!(o.company || o.cname || o.contact || o.via);
   this.paint();
 };
 JobForm.prototype.clearText = function(){
   ['Desc','Company','Cname','Contact'].forEach(n => { this.el(n).value = ''; });
   this.el('Cust').open = false;
+  if (this.st.via) { this.st.via = ''; this.paint(); }
 };
 JobForm.prototype.setRO = function(ro){
   this.ro = ro;
   $$('input,textarea', this.root).forEach(x => { x.readOnly = ro; });
   $$('[data-v]', this.root).forEach(x => { x.disabled = ro; });
 };
+/* Ghi chú hiển thị = Liên hệ qua + Ghi chú */
+function noteText(it){
+  const v = String(it.via || '').trim(), c = String(it.contact || '').trim();
+  return v ? 'Qua ' + v + (c ? ' – ' + c : '') : c;
+}
 function checkItem(d){
   if (!d.type) return 'Chọn loại việc.';
   if (!d.status) return 'Chọn trạng thái.';
@@ -857,7 +874,7 @@ const EF = new JobForm($('#editForm'), 'e');
 /* ---------- Thẻ công việc ---------- */
 function jobCard(it){
   const k = stKey(it.status);
-  const cust = [it.company, it.cname, it.contact].filter(Boolean).join(' · ');
+  const cust = [it.company, it.cname, noteText(it)].filter(Boolean).join(' · ');
   return '<div class="job" role="button" tabindex="0" data-id="' + esc(it.id) + '">' +
     '<span class="no num">#' + esc(it.no || '–') + '</span>' +
     '<span style="min-width:0;display:block">' +
@@ -912,7 +929,7 @@ window.addEventListener('resize', closeStMenu);
 async function quickStatus(id, st){
   const it = findItem(id); if (!it || it.status === st) return;
   const d = { id: it.id, date: it.date, type: it.type, status: st, desc: it.desc, people: it.people.slice(),
-    company: it.company, cname: it.cname, contact: it.contact };
+    company: it.company, cname: it.cname, contact: it.contact, via: it.via || '' };
   try {
     const r = await api('apiSave', d);
     upsert(S.dayItems, r); upsert(S.listItems, r); renderDay(); renderList();
@@ -998,7 +1015,7 @@ function renderDay(){
       cell(it.type, 'x-type') +
       '<td class="x-st" style="--c:' + ST_HEX[stKey(it.status)] + '">' + (it.canEdit ? '<button type="button" data-stq="' + esc(it.id) + '" title="Bấm để đổi trạng thái">' + esc(it.status) + '</button>' : esc(it.status)) + '</td>' +
       cell(it.desc, 'x-desc') + cell(it.people[0], 'x-p') + cell(it.people[1], 'x-p') + cell(it.people[2], 'x-p') +
-      cell(it.company, 'x-co') + cell(it.cname, 'x-cn') + cell(it.contact, 'x-ct') + '</tr>').join('') +
+      cell(it.company, 'x-co') + cell(it.cname, 'x-cn') + cell(noteText(it), 'x-ct') + '</tr>').join('') +
     '</tbody></table></div>';
 }
 $('#dayStats').addEventListener('click', e => {
@@ -1028,7 +1045,7 @@ $('#tplRow').addEventListener('click', e => {
   const people = NF.st.people.length ? NF.st.people.slice() : (S.user && S.user.name ? [S.user.name] : []);
   const cur = NF.get();
   NF.set({ type: t.type || NF.st.type || '', status: t.status || NF.st.status || S.cats.statuses[0] || '', desc: t.desc, people: people,
-    company: cur.company, cname: cur.cname, contact: cur.contact });
+    company: cur.company, cname: cur.cname, contact: cur.contact, via: cur.via });
   $$('#tplRow .tpl').forEach(x => x.classList.toggle('on', x === b));
   const f = $('#fNew'); f.classList.remove('flash'); void f.offsetWidth; f.classList.add('flash');
   f.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
@@ -1150,7 +1167,7 @@ function listFiltered(ignoreStatus){
   const per = $('#lPerson').value, st = ignoreStatus ? '' : $('#lStatus').value, q = norm($('#lSearch').value.trim());
   return S.listItems.filter(i => i.date >= S.listRange[0] && i.date <= S.listRange[1] &&
     (!per || i.people.indexOf(per) >= 0) && (!st || i.status === st) &&
-    (!q || norm([i.desc, i.type, i.company, i.cname, i.contact, i.people.join(' ')].join(' ')).indexOf(q) >= 0));
+    (!q || norm([i.desc, i.type, i.company, i.cname, i.contact, i.via, i.people.join(' ')].join(' ')).indexOf(q) >= 0));
 }
 const wideMQ = window.matchMedia('(min-width:900px)');
 const onWide = () => { renderList(); renderDay(); };
@@ -1189,8 +1206,8 @@ function tableHTML(items){
       c[1] + '<span class="ar">' + (on ? (S.sort.dir > 0 ? '▲' : '▼') : '⇅') + '</span></button></th>';
   }).join('');
   const rows = items.map(it => {
-    const cust = [it.company, it.cname].filter(Boolean).join(' · ') || it.contact;
-    const custFull = [it.company, it.cname, it.contact].filter(Boolean).join(' · ');
+    const cust = [it.company, it.cname].filter(Boolean).join(' · ') || noteText(it);
+    const custFull = [it.company, it.cname, noteText(it)].filter(Boolean).join(' · ');
     return '<tr data-id="' + esc(it.id) + '">' +
       '<td class="c-no">#' + esc(it.no) + '</td>' +
       '<td class="c-date">' + dmy(it.date) + '<small>' + wd(it.date) + '</small></td>' +
@@ -1327,7 +1344,7 @@ function measureItem(ctx, it, showCust){
   const d = clip(ctx, wrap(ctx, it.desc, ITEM.TW), 12, ITEM.TW);
   ctx.font = fnt(400, 25);
   const pl = clip(ctx, wrap(ctx, 'Nhân sự: ' + it.people.join(', '), ITEM.TW), 2, ITEM.TW);
-  const ct = [it.company, it.cname, it.contact].filter(Boolean).join(' · ');
+  const ct = [it.company, it.cname, noteText(it)].filter(Boolean).join(' · ');
   const cl = showCust && ct ? clip(ctx, wrap(ctx, 'Khách hàng: ' + ct, ITEM.TW), 4, ITEM.TW) : [];
   const h = 26 + 40 + 16 + d.length * 42 + 8 + (pl.length + cl.length) * 36 + 22;
   return { kind: 'item', it: it, d: d, pl: pl, cl: cl, h: h };
@@ -1501,7 +1518,7 @@ async function buildTableImages(items, o){
 
   // sắp xếp theo ngày rồi số
   items = items.slice().sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.no - b.no);
-  const val = (it, k, i) => k === 'no' ? String(i + 1) : k === 'date' ? dmy(it.date) : k === 'p1' ? it.people[0] : k === 'p2' ? it.people[1] : k === 'p3' ? it.people[2] : it[k];
+  const val = (it, k, i) => k === 'no' ? String(i + 1) : k === 'date' ? dmy(it.date) : k === 'p1' ? it.people[0] : k === 'p2' ? it.people[1] : k === 'p3' ? it.people[2] : k === 'contact' ? noteText(it) : it[k];
   const rows = items.map((it, i) => {
     const cells = cols.map(c => {
       const v = String(val(it, c.k, i) || '').trim();
@@ -1699,7 +1716,7 @@ let D = null, dirtySet = false, dirtyUser = false;
 const clone = o => JSON.parse(JSON.stringify(o));
 function openSettings(){
   if (!D || (!dirtySet && !dirtyUser)) {
-    D = { types: S.cats.types.slice(), statuses: S.cats.statuses.slice(), people: S.cats.people.slice(),
+    D = { types: S.cats.types.slice(), statuses: S.cats.statuses.slice(), people: S.cats.people.slice(), vias: (S.cats.vias || []).slice(),
       templates: clone(S.templates), users: clone(S.users) };
     dirtySet = dirtyUser = false;
   }
@@ -1707,7 +1724,7 @@ function openSettings(){
 }
 function markDirty(which){ if (which === 'u') dirtyUser = true; else dirtySet = true; $('#setDirty').hidden = !dirtySet; $('#userDirty').hidden = !dirtyUser; }
 function renderCats(){
-  ['types','statuses','people'].forEach(k => {
+  ['types','statuses','people','vias'].forEach(k => {
     $('.tags[data-cat=' + k + ']').innerHTML = D[k].length ? D[k].map((v, i) =>
       '<span class="tg">' + esc(v) + '<button type="button" data-cat="' + k + '" data-del="' + i + '" aria-label="Xoá ' + esc(v) + '">×</button></span>').join('')
       : '<span class="hint">Chưa có mục nào.</span>';
@@ -1772,10 +1789,10 @@ $('#saveSettings').onclick = async () => {
   if (half.length) { toast('Mỗi mẫu việc cần có cả Tên nút và Mô tả.'); return; }
   const b = $('#saveSettings'); b.disabled = true;
   try {
-    const r = await api('apiSaveSettings', { types: D.types, statuses: D.statuses, people: D.people,
+    const r = await api('apiSaveSettings', { types: D.types, statuses: D.statuses, people: D.people, vias: D.vias,
       templates: D.templates.filter(t => t.name.trim() && t.desc.trim()) });
     S.cats = r.cats; S.templates = r.templates;
-    D.types = r.cats.types.slice(); D.statuses = r.cats.statuses.slice(); D.people = r.cats.people.slice(); D.templates = clone(r.templates);
+    D.types = r.cats.types.slice(); D.statuses = r.cats.statuses.slice(); D.people = r.cats.people.slice(); D.vias = (r.cats.vias || []).slice(); D.templates = clone(r.templates);
     dirtySet = false; renderSettings(); afterCatsChange();
     toast('Đã lưu danh mục và mẫu việc.');
   } catch(err){ fail(err); }
@@ -1990,7 +2007,7 @@ const Demo = (function(){
   let role = ADMIN, seq = 0, nextNo = 1;
   const db = {
     cats: { types: ['CSKH_TV','CSKH_XLL','HTKT','WSHCM','Nhận hàng','Kiểm tra','Sửa chữa','Đóng gói','Test','Gửi hàng'],
-      statuses: ['Hoàn thành','Chưa xong','Đang theo dõi'], people: PPL.slice() },
+      statuses: ['Hoàn thành','Chưa xong','Đang theo dõi'], people: PPL.slice(), vias: ['Sim Hotline','Điện thoại','Zalo','Email'] },
     templates: [
       { name: 'Tổng đài GCC', type: 'WSHCM', status: 'Hoàn thành', desc: 'Vận hành tổng đài GCC' },
       { name: 'Dọn dẹp WS', type: 'WSHCM', status: 'Hoàn thành', desc: 'Dọn dẹp khu WS' },
@@ -2004,12 +2021,12 @@ const Demo = (function(){
   function add(off, type, status, desc, ppl, by, cust){
     cust = cust || {};
     db.items.push({ id: 'd' + (++seq), no: nextNo++, date: addDays(T, off), type: type, status: status, desc: desc, people: ppl,
-      company: cust.company || '', cname: cust.cname || '', contact: cust.contact || '', by: by });
+      company: cust.company || '', cname: cust.cname || '', contact: cust.contact || '', via: cust.via || '', by: by });
   }
   // dữ liệu mẫu 7 ngày gần nhất
   add(-6, 'Nhận hàng', 'Hoàn thành', 'Nhận 2 Inverter SG110CX từ BBCO', [PPL[2]], CANH);
   add(-6, 'Kiểm tra', 'Hoàn thành', 'SG110CX A1910263837 – lỗi 70, 39, nghi hỏng IGBT', [PPL[2], PPL[0]], CANH);
-  add(-5, 'CSKH_TV', 'Hoàn thành', 'Tư vấn cấu hình chống phát ngược cho SG33CX-P2', [PPL[1]], CHAU, { company: 'Công ty TNHH Năng lượng Phú Thành', cname: 'Anh Lâm', contact: '0901223344 Qua Sim Hotline - Inverter SG33CX-P2' });
+  add(-5, 'CSKH_TV', 'Hoàn thành', 'Tư vấn cấu hình chống phát ngược cho SG33CX-P2', [PPL[1]], CHAU, { company: 'Công ty TNHH Năng lượng Phú Thành', cname: 'Anh Lâm', via: 'Sim Hotline', contact: '0901223344 – Inverter SG33CX-P2' });
   add(-5, 'WSHCM', 'Hoàn thành', 'Vận hành tổng đài GCC', [PPL[0]], ME);
   add(-4, 'Sửa chữa', 'Chưa xong', 'SG110CX A1910263837 – chờ báo giá thay IGBT, khách chưa phản hồi', [PPL[2]], CANH);
   add(-4, 'HTKT', 'Hoàn thành', 'Hỗ trợ cấu hình Logger1000 kết nối iSolarCloud', [PPL[1], PPL[0]], CHAU, { contact: 'Qua zalo helpdesk A - Plant Đức Hòa' });
@@ -2019,11 +2036,11 @@ const Demo = (function(){
   add(-2, 'Gửi hàng', 'Hoàn thành', 'Gửi 2 inverter về BBCO qua Viettel Post', [PPL[2], PPL[1]], CANH);
   add(-1, 'WSHCM', 'Hoàn thành', 'Vận hành tổng đài GCC', [PPL[0]], ME);
   add(-1, 'Kiểm tra', 'Chưa xong', 'SG125CX-P2 A2240602256 – báo lỗi 039, đang đo kiểm IGBT', [PPL[2]], CANH);
-  add(-1, 'CSKH_TV', 'Hoàn thành', 'Hướng dẫn khách đọc mã lỗi qua app iSolarCloud', [PPL[1]], CHAU, { company: 'Solar Miền Tây', cname: 'Chị Hạnh', contact: '0834853797 Qua Sim Hotline - Inverter SG50CX' });
+  add(-1, 'CSKH_TV', 'Hoàn thành', 'Hướng dẫn khách đọc mã lỗi qua app iSolarCloud', [PPL[1]], CHAU, { company: 'Solar Miền Tây', cname: 'Chị Hạnh', via: 'Sim Hotline', contact: '0834853797 – Inverter SG50CX' });
   add(0, 'WSHCM', 'Hoàn thành', 'Vận hành tổng đài GCC', [PPL[0]], ME);
   add(0, 'Nhận hàng', 'Hoàn thành', 'Nhận 1 Inverter SG20KTL-M', [PPL[2]], CANH);
   add(0, 'Kiểm tra', 'Chưa xong', 'SG125CX-P2 A2240602256 – thay thử board nguồn, máy vẫn báo lỗi 039. Chờ linh kiện IGBT từ kho HN', [PPL[2], PPL[0]], CANH);
-  add(0, 'CSKH_TV', 'Hoàn thành', 'Tư vấn cài đặt giới hạn phát lưới cho SG50CX', [PPL[1]], CHAU, { company: 'Công ty CP Điện Mặt Trời Long Hậu', cname: 'Anh Hùng', contact: '0834853797 Qua Sim Hotline - Inverter SG50CX' });
+  add(0, 'CSKH_TV', 'Hoàn thành', 'Tư vấn cài đặt giới hạn phát lưới cho SG50CX', [PPL[1]], CHAU, { company: 'Công ty CP Điện Mặt Trời Long Hậu', cname: 'Anh Hùng', via: 'Sim Hotline', contact: '0834853797 – Inverter SG50CX' });
   add(0, 'CSKH_XLL', 'Đang theo dõi', 'Logger1000 B2120200150 mất SN, đã hướng dẫn khởi động lại, theo dõi đến thứ Hai', [PPL[1]], CHAU, { company: 'XB', contact: 'Qua zalo helpdesk A - Plant Long An' });
   add(0, 'Sửa chữa', 'Chưa xong', 'SG110CX A22B2801393 thay AC Relay, chờ linh kiện', [PPL[2], PPL[0]], CANH);
   add(0, 'Test', 'Hoàn thành', 'Chạy tải 4 giờ SG33CX-P2 sau sửa chữa, đạt', [PPL[2]], CANH);
@@ -2043,7 +2060,7 @@ const Demo = (function(){
       const u = me();
       if (!x.type) err('Vui lòng chọn loại việc.'); if (!x.status) err('Vui lòng chọn trạng thái.');
       if (!x.desc) err('Vui lòng nhập mô tả công việc.'); if (!x.people || !x.people.length) err('Vui lòng chọn ít nhất 1 nhân sự.');
-      const data = { date: x.date, type: x.type, status: x.status, desc: x.desc, people: x.people.slice(0, 3), company: x.company || '', cname: x.cname || '', contact: x.contact || '' };
+      const data = { date: x.date, type: x.type, status: x.status, desc: x.desc, people: x.people.slice(0, 3), company: x.company || '', cname: x.cname || '', contact: x.contact || '', via: x.via || '' };
       if (x.id) {
         const it = db.items.find(i => i.id === x.id); if (!it) err('Không tìm thấy công việc (có thể đã bị xoá).');
         if (!u.isAdmin && it.by !== ME) err('Bạn chỉ sửa được công việc do mình nhập.');
@@ -2058,7 +2075,7 @@ const Demo = (function(){
     },
     apiSaveSettings(s){
       if (!me().isAdmin) err('Chỉ Quản lý mới thực hiện được thao tác này.');
-      db.cats = { types: s.types.slice(), statuses: s.statuses.slice(), people: s.people.slice() };
+      db.cats = { types: s.types.slice(), statuses: s.statuses.slice(), people: s.people.slice(), vias: (s.vias || []).slice() };
       db.templates = s.templates.map(t => ({ name: t.name, type: t.type, status: t.status, desc: t.desc }));
       return { cats: db.cats, templates: db.templates };
     },
