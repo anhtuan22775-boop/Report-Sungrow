@@ -608,7 +608,7 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
           <button type="button" class="btn sm" id="xShareAll" hidden>Chia sẻ tất cả</button>
           <button type="button" class="btn sm dark" id="xAll">Tải tất cả</button>
         </div>
-        <div class="xout" id="xOut"><div class="empty">Chọn khoảng ngày rồi bấm <b>Tạo ảnh báo cáo</b>.</div></div>
+        <div class="xout" id="xOut"></div>
       </div>
     </div>
   </section>
@@ -786,7 +786,7 @@ function JobForm(root, pfx){
       '<div class="cust-grid">' +
         '<label class="f">Công ty<input type="text" id="' + pfx + 'Company" placeholder="Tên công ty / đại lý"></label>' +
         '<label class="f">Người liên hệ<input type="text" id="' + pfx + 'Cname" placeholder="Tên người liên hệ"></label>' +
-        '<label class="f wide">Liên hệ<input type="text" id="' + pfx + 'Contact" placeholder="VD: 0834853797 Qua Sim Hotline - Inverter …"></label>' +
+        '<label class="f wide">Ghi chú<input type="text" id="' + pfx + 'Contact" placeholder="VD: 0834853797 Qua Sim Hotline - Inverter …"></label>' +
       '</div></details></div>';
   root.addEventListener('click', e => {
     const b = e.target.closest('[data-v]');
@@ -991,7 +991,7 @@ function renderDay(){
   if (!wideMQ.matches) { $('#dayList').innerHTML = items.map(jobCard).join(''); return; }
   const cell = (v, cls) => v ? '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(v) + '</td>' : '<td class="dash">-</td>';
   $('#dayList').innerHTML = '<div class="tbl-wrap"><table class="xt"><thead><tr>' +
-    ['No','Time','Type','Status','Describe','Personnel 1','Personnel 2','Personnel 3','Công ty','Tên người liên hệ','Liên hệ'].map(h => '<th>' + h + '</th>').join('') +
+    ['No','Time','Type','Status','Describe','Personnel 1','Personnel 2','Personnel 3','Công ty','Tên người liên hệ','Ghi chú'].map(h => '<th>' + h + '</th>').join('') +
     '</tr></thead><tbody>' + items.map((it, i) => '<tr data-id="' + esc(it.id) + '" title="Việc #' + esc(it.no) + ' – bấm để ' + (it.canEdit ? 'sửa' : 'xem') + '">' +
       '<td class="x-no">' + (i + 1) + '</td>' +
       '<td class="x-date">' + dmy(it.date) + '</td>' +
@@ -1494,7 +1494,7 @@ async function buildTableImages(items, o){
     { k: 'status', h: 'Status', w: 175, al: 'c' }, { k: 'desc', h: 'Describe', w: 0, max: 6 },
     { k: 'p1', h: 'Personnel 1', w: 165 }, { k: 'p2', h: 'Personnel 2', w: 165 }, { k: 'p3', h: 'Personnel 3', w: 165 }
   ];
-  if (o.cust) cols = cols.concat([{ k: 'company', h: 'Company', w: 190, max: 4 }, { k: 'cname', h: 'Người liên hệ', w: 150, max: 3 }, { k: 'contact', h: 'Liên hệ', w: 280, max: 4 }]);
+  if (o.cust) cols = cols.concat([{ k: 'company', h: 'Company', w: 190, max: 4 }, { k: 'cname', h: 'Người liên hệ', w: 150, max: 3 }, { k: 'contact', h: 'Ghi chú', w: 280, max: 4 }]);
   const fixed = cols.reduce((a, c) => a + c.w, 0);
   cols.find(c => c.k === 'desc').w = W - 2 * P - fixed;
   let x = P; cols.forEach(c => { c.x = x; x += c.w; });
