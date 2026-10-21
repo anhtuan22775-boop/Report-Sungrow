@@ -1042,7 +1042,7 @@ $('#tplRow').addEventListener('click', e => {
   const b = e.target.closest('[data-tpl]');
   if (!b) return;
   const t = S.templates[+b.dataset.tpl];
-  const people = NF.st.people.length ? NF.st.people.slice() : (S.user && S.user.name ? [S.user.name] : []);
+  const people = NF.st.people.slice(); // không tự chọn sẵn nhân sự
   const cur = NF.get();
   NF.set({ type: t.type || NF.st.type || '', status: t.status || NF.st.status || S.cats.statuses[0] || '', desc: t.desc, people: people,
     company: cur.company, cname: cur.cname, contact: cur.contact, via: cur.via });
@@ -1058,7 +1058,7 @@ function resetNewForm(){
   NF.set({
     type: S.cats.types.indexOf(keepType) >= 0 ? keepType : '',
     status: S.cats.statuses[0] || '',
-    people: S.user && S.user.name ? [S.user.name] : []
+    people: [] // không chọn sẵn nhân sự, người nhập tự chọn
   });
 }
 $('#fNew').addEventListener('submit', async e => {
@@ -1071,7 +1071,7 @@ $('#fNew').addEventListener('submit', async e => {
     const r = await api('apiSave', d);
     upsert(S.dayItems, r); renderDay();
     store.set('lastType', d.type);
-    NF.clearText(); NF.paint();
+    NF.clearText(); NF.st.people = []; NF.paint();
     $$('#tplRow .tpl').forEach(t => t.classList.remove('on'));
     $('#nDesc').focus();
     toast('Đã lưu việc #' + r.no + '.');
