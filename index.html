@@ -1056,10 +1056,13 @@ function noteText(it){
   const v = String(it.via || '').trim(), c = String(it.contact || '').trim();
   return v ? 'Qua ' + v + (c ? ' – ' + c : '') : c;
 }
-/* Việc tự chuyển từ ngày trước: "Tiếp từ dd/mm" */
-const sinceTxt = it => it.since ? 'Tiếp từ ' + dmy(it.since).slice(0, 5) : '';
+/* Việc tự chuyển từ ngày trước: "Từ ngày dd/mm" */
+const sinceTxt = it => it.since ? 'Từ ngày ' + dmy(it.since).slice(0, 5) : '';
 const carryTag = it => it.since ? '<span class="carry" title="Việc chưa xong, tự chuyển sang từ ngày ' + dmy(it.since) + '">↻ ' + sinceTxt(it) + '</span>' : '';
-const assnTag = it => it.task ? '<span class="assn" title="Dòng báo cáo của việc được giao">Được giao</span>' : '';
+// Việc được giao từ ngày trước -> "Được giao · Từ ngày dd/mm"
+const assnFrom = it => { const t = it.task && S.tasks && S.tasks.find(x => x.id === it.task); return t && t.date && t.date < it.date ? t.date : ''; };
+const assnTag = it => { if (!it.task) return ''; const f = assnFrom(it);
+  return '<span class="assn" title="Dòng báo cáo của việc được giao' + (f ? ' ngày ' + dmy(f) : '') + '">Được giao' + (f ? ' · Từ ngày ' + dmy(f).slice(0, 5) : '') + '</span>'; };
 const descImg = it => it.desc + (it.since ? '\n(' + sinceTxt(it) + ')' : '');
 function afterSave(r){
   upsert(S.dayItems, r); upsert(S.listItems, r);
@@ -1427,7 +1430,7 @@ function kpiHTML(items){
 function tableHTML(items){
   const cols = [['no','Số'],['date','Ngày'],['type','Loại việc'],[null,'Mô tả công việc'],['people','Nhân sự'],[null,'Khách hàng'],['status','Trạng thái'],[null,'']];
   const head = cols.map(c => {
-    if (!c[0]) return '<th>' + c[1] + '</th>';
+    if (!c[0] || c[0] === 'no') return '<th>' + c[1] + '</th>';   // cột Số: chỉ là số thứ tự, không sắp xếp
     const on = S.sort.k === c[0];
     return '<th class="' + (on ? 'sorted' : '') + '" aria-sort="' + (on ? (S.sort.dir > 0 ? 'ascending' : 'descending') : 'none') + '"><button type="button" data-sort="' + c[0] + '">' +
       c[1] + '<span class="ar">' + (on ? (S.sort.dir > 0 ? '▲' : '▼') : '⇅') + '</span></button></th>';
@@ -2197,6 +2200,7 @@ function fillSel(sel, list, first){
 function renderTasks(){
   if (!S.tasksReady || !S.user) return;
   if (S.dayItems) renderDay();
+  if (S.listRange) renderList();
   closeStMenu();
   fillSel($('#kMyStatus'), S.cats.statuses, 'Tất cả trạng thái');
   fillSel($('#kStatus'), S.cats.statuses, 'Tất cả trạng thái');
