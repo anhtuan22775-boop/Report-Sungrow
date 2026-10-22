@@ -173,6 +173,21 @@ details.cust[open] summary::before{content:"–"}
 .job-desc{font-size:15px;font-weight:500;white-space:pre-wrap;overflow-wrap:anywhere}
 .job-meta{margin-top:4px;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 12px;overflow-wrap:anywhere}
 .job-meta span{display:inline-flex;gap:5px;align-items:baseline}
+.carry{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700;color:var(--sun-ink);background:var(--sun-soft);border:1px solid var(--sun-line);white-space:nowrap}
+.carry-l{display:block;margin-top:4px}
+.assn{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700;color:var(--watch);background:var(--watch-soft);white-space:nowrap}
+.mv{border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);border-radius:8px;padding:5px 10px;font-size:12.5px;font-weight:700;white-space:nowrap;min-height:32px}
+.mv:hover{border-color:var(--sun);color:var(--sun-ink);background:var(--sun-soft)}
+.job-act{display:flex;justify-content:flex-end;margin-top:8px}
+button.ps{border:0;background:none;text-align:left;padding:6px 8px;margin:0 -8px;border-radius:8px;font:inherit;color:inherit;cursor:pointer}
+button.ps:hover{background:var(--paper)}
+button.ps.on{background:var(--sun-soft);box-shadow:inset 0 0 0 1px var(--sun-line)}
+.tk-tools{flex:0 1 640px!important}
+.jt.tk .c-desc{min-width:200px;max-width:300px}
+.jt.tk .c-cust{min-width:120px;max-width:170px}
+.jt.tk td{padding:10px 10px}
+#kTplWrap .tpl-row{margin-bottom:2px}
+.demobar button.on{background:var(--sun);border-color:var(--sun);color:var(--on-ink)}
 .lock{margin-left:auto;font-size:11px;color:var(--faint);font-weight:600}
 .empty{padding:28px 16px;text-align:center;color:var(--muted);font-size:14px;background:var(--card);border:1px dashed var(--line-2);border-radius:var(--r)}
 
@@ -182,6 +197,12 @@ details.cust[open] summary::before{content:"–"}
 .quick{display:flex;flex-wrap:wrap;gap:6px}
 .quick button{border:1px solid var(--line-2);background:var(--card);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;color:var(--ink-2)}
 .quick button.on{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
+/* Xuất báo cáo: 4 nút chọn nhanh nằm cùng 1 hàng */
+#xQuick{flex-wrap:nowrap}
+#xQuick button{flex:1 1 0;min-width:0;padding:6px 4px;white-space:nowrap;text-align:center}
+@media (max-width:400px){#xQuick{gap:4px}#xQuick button{font-size:12px;padding:6px 2px}}
+/* Điện thoại: chữ tab nằm 1 dòng */
+@media (max-width:899px){.tabs button{padding:6px 1px}.tabs button span{white-space:nowrap;font-size:10.5px;letter-spacing:-.1px}}
 .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (min-width:600px){.stats{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))}}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
@@ -284,6 +305,7 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
 /* ---------- Tab Xuất ảnh ---------- */
 .export-grid{display:grid;gap:16px;align-items:start}
 @media (min-width:900px){.export-grid{grid-template-columns:360px minmax(0,1fr)}.export-grid>.panel{position:sticky;top:76px}}
+.x-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .check{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500}
 .check input{width:20px;height:20px;accent-color:var(--ink)}
 .xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px}
@@ -431,9 +453,10 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
       <div style="min-width:0"><b>Service NUE | Báo cáo</b><small id="whoami" title="Mở màn hình chào">Đang tải…</small></div>
     </div>
     <nav class="tabs" id="tabs" hidden>
-      <button type="button" data-tab="entry" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Nhập việc</span></button>
+      <button type="button" data-tab="entry" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Nhập báo cáo</span></button>
+      <button type="button" data-tab="tasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="m9 13 2 2 4-4"/></svg><span>Giao việc</span></button>
       <button type="button" data-tab="list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span>Danh sách</span></button>
-      <button type="button" data-tab="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg><span>Xuất ảnh</span></button>
+      <button type="button" data-tab="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg><span>Xuất báo cáo</span></button>
       <button type="button" data-tab="settings" id="tabSettings" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span>Cài đặt</span></button>
     </nav>
   </div>
@@ -442,7 +465,7 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
 <div class="demobar" id="demoBar" hidden>
   <div class="demobar-in">
     <span><b>Bản dùng thử:</b> dữ liệu mẫu, tải lại trang là mất. Bản thật lưu vào Google Sheets.</span>
-    <button type="button" id="demoRole">Xem như Nhân viên</button>
+    <span id="demoRoles" style="display:inline-flex;gap:6px;flex-wrap:wrap"><button type="button" data-demo-role="Admin" class="on">Xem như Admin</button><button type="button" data-demo-role="Quản lý">Xem như Quản lý</button><button type="button" data-demo-role="Nhân viên">Xem như Nhân viên</button></span>
     <button type="button" id="demoDenied">Xem màn hình chưa cấp quyền</button>
   </div>
 </div>
@@ -587,7 +610,7 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
   <section class="view" id="v-export" hidden>
     <div class="export-grid">
       <div class="panel">
-        <div class="panel-h"><span>Thiết lập ảnh báo cáo</span></div>
+        <div class="panel-h"><span>Thiết lập báo cáo</span></div>
         <div class="row2">
           <label class="f">Từ ngày<input type="date" id="xFrom"></label>
           <label class="f">Đến ngày<input type="date" id="xTo"></label>
@@ -603,7 +626,10 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
         </select></label>
         <label class="f">Tiêu đề<input type="text" id="xTitle" value="BÁO CÁO CÔNG VIỆC NGÀY" maxlength="60"></label>
         <label class="check"><input type="checkbox" id="xCust" checked> Hiện thông tin khách hàng</label>
-        <button type="button" class="btn primary wide" id="xMake">Tạo ảnh báo cáo</button>
+        <div class="x-acts">
+          <button type="button" class="btn primary" id="xMake">Xuất ảnh</button>
+          <button type="button" class="btn dark" id="xFile">Xuất file</button>
+        </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
         <div class="xbar" id="xBar" hidden>
@@ -644,7 +670,7 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="usersPanel">
       <div class="panel-h"><span>Người dùng</span><small>Chỉ email có ở đây mới vào được web</small></div>
       <div class="col-head user-head"><div class="cells"><span>Email Google</span><span>Họ tên</span><span>Vai trò</span></div></div>
       <div class="rows user-rows" id="userRows"></div>
@@ -658,7 +684,70 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
       <ul class="notes" id="userNotes" hidden></ul>
     </div>
   </section>
+
+  <!-- ============ TAB 5: GIAO VIỆC ============ -->
+  <section class="view" id="v-tasks" hidden>
+    <div class="page-h"><div class="ph-t"><h1>Giao việc</h1></div></div>
+    <div class="panel">
+      <div class="tbl-head">
+        <div><h2>Việc của tôi</h2><small id="kMyCount"></small></div>
+        <div class="tools day-tools"><select id="kMyStatus" aria-label="Lọc theo trạng thái"></select></div>
+      </div>
+      <div id="kMyList" class="jobs"></div>
+    </div>
+    <div class="panel" id="kMgr" hidden>
+      <div class="tbl-head">
+        <div><h2>Quản lý giao việc</h2><small id="kCount"></small></div>
+        <button type="button" class="btn primary" id="kNew">+ Giao việc</button>
+      </div>
+      <div id="kStats" class="kpis"></div>
+      <div id="kPeople" class="ppl-sum"></div>
+      <div class="tbl-head">
+        <span></span>
+        <div class="tools tk-tools">
+          <input type="text" class="wide" id="kSearch" placeholder="Tìm mô tả, S/N, khách hàng…" aria-label="Tìm kiếm">
+          <select id="kPerson" aria-label="Lọc theo nhân sự"></select>
+          <select id="kStatus" aria-label="Lọc theo trạng thái"></select>
+        </div>
+      </div>
+      <div id="kList" class="jobs"></div>
+    </div>
+  </section>
 </main>
+
+<!-- Cửa sổ giao / sửa việc giao -->
+<div class="modal" id="taskModal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="kTitle">
+    <div class="sheet-h"><b id="kTitle">Giao việc</b><button type="button" class="icon-btn" data-kclose aria-label="Đóng">×</button></div>
+    <div class="sheet-b">
+      <div class="field" id="kTplWrap" hidden><div class="lbl">Đề xuất nhanh</div><div class="tpl-row" id="kTplRow"></div></div>
+      <div id="taskForm"></div>
+      <div class="sheet-meta" id="kMeta"></div>
+    </div>
+    <div class="sheet-f">
+      <button type="button" class="btn danger" id="kDel">Xoá</button>
+      <button type="button" class="btn" id="kMove">Chuyển việc</button>
+      <span class="sp"></span>
+      <button type="button" class="btn ghost" data-kclose>Đóng</button>
+      <button type="button" class="btn primary" id="kSave">Giao việc</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cửa sổ chuyển việc -->
+<div class="modal" id="moveModal" hidden>
+  <div class="sheet small" role="dialog" aria-modal="true" aria-labelledby="mvTitle">
+    <div class="sheet-h"><b id="mvTitle">Chuyển việc</b><button type="button" class="icon-btn" data-mclose aria-label="Đóng">×</button></div>
+    <div class="sheet-b">
+      <div class="field"><div class="lbl">Người nhận mới <small>Có thể chọn nhiều nhân sự</small></div><div class="choices" id="mvList"></div></div>
+    </div>
+    <div class="sheet-f">
+      <span class="sp"></span>
+      <button type="button" class="btn ghost" data-mclose>Đóng</button>
+      <button type="button" class="btn primary" id="mvOk">Chuyển việc</button>
+    </div>
+  </div>
+</div>
 
 <!-- Cửa sổ sửa việc -->
 <div class="modal" id="editModal" hidden>
@@ -773,7 +862,8 @@ const fail = e => toast(errMsg(e), { err: true, ms: 6000 });
 /* ---------- Trạng thái ứng dụng ---------- */
 const S = {
   user: null, cats: { types: [], statuses: [], people: [], vias: [] }, templates: [], users: [],
-  day: todayISO(), dayItems: [], listItems: [], listRange: null, tab: 'entry'
+  day: todayISO(), dayItems: [], listItems: [], listRange: null, tab: 'entry',
+  tasks: [], tasksReady: false
 };
 
 /* ---------- Form công việc (dùng chung cho Nhập việc và cửa sổ Sửa) ---------- */
@@ -796,8 +886,9 @@ function JobForm(root, pfx){
       '</div></details></div>';
   root.addEventListener('click', e => {
     const b = e.target.closest('[data-v]');
-    if (!b || this.ro || !root.contains(b)) return;
+    if (!b || !root.contains(b)) return;
     const k = b.parentElement.dataset.k, v = b.dataset.v;
+    if (this.ro && !(this.keepSt && k === 'status')) return;
     if (k === 'people') {
       const i = this.st.people.indexOf(v);
       if (i >= 0) this.st.people.splice(i, 1);
@@ -850,15 +941,26 @@ JobForm.prototype.clearText = function(){
   this.el('Cust').open = false;
   if (this.st.via) { this.st.via = ''; this.paint(); }
 };
-JobForm.prototype.setRO = function(ro){
-  this.ro = ro;
+JobForm.prototype.setRO = function(ro, keepStatus){
+  this.ro = ro; this.keepSt = !!keepStatus;
   $$('input,textarea', this.root).forEach(x => { x.readOnly = ro; });
-  $$('[data-v]', this.root).forEach(x => { x.disabled = ro; });
+  $$('[data-v]', this.root).forEach(x => { x.disabled = ro && !(keepStatus && x.parentElement.dataset.k === 'status'); });
 };
 /* Ghi chú hiển thị = Liên hệ qua + Ghi chú */
 function noteText(it){
   const v = String(it.via || '').trim(), c = String(it.contact || '').trim();
   return v ? 'Qua ' + v + (c ? ' – ' + c : '') : c;
+}
+/* Việc tự chuyển từ ngày trước: "Tiếp từ dd/mm" */
+const sinceTxt = it => it.since ? 'Tiếp từ ' + dmy(it.since).slice(0, 5) : '';
+const carryTag = it => it.since ? '<span class="carry" title="Việc chưa xong, tự chuyển sang từ ngày ' + dmy(it.since) + '">↻ ' + sinceTxt(it) + '</span>' : '';
+const assnTag = it => it.task ? '<span class="assn" title="Dòng báo cáo của việc được giao">Được giao</span>' : '';
+const descImg = it => it.desc + (it.since ? '\n(' + sinceTxt(it) + ')' : '');
+function afterSave(r){
+  upsert(S.dayItems, r); upsert(S.listItems, r);
+  (r.removed || []).forEach(id => { removeFrom(S.dayItems, id); removeFrom(S.listItems, id); });
+  if (r.task) { upsert(S.tasks, r.task); renderTasks(); }
+  renderDay(); renderList();
 }
 function checkItem(d){
   if (!d.type) return 'Chọn loại việc.';
@@ -878,7 +980,7 @@ function jobCard(it){
   return '<div class="job" role="button" tabindex="0" data-id="' + esc(it.id) + '">' +
     '<span class="no num">#' + esc(it.no || '–') + '</span>' +
     '<span style="min-width:0;display:block">' +
-      '<span class="job-top"><span class="tag">' + esc(it.type) + '</span>' + stPill(it) +
+      '<span class="job-top"><span class="tag">' + esc(it.type) + '</span>' + stPill(it) + carryTag(it) + assnTag(it) +
         (it.canEdit ? '' : '<span class="lock">Chỉ xem</span>') + '</span>' +
       '<span class="job-desc" style="display:block">' + esc(it.desc) + '</span>' +
       '<span class="job-meta"><span>' + esc(it.people.join(', ')) + '</span>' + (cust ? '<span>' + esc(cust) + '</span>' : '') + '</span>' +
@@ -904,13 +1006,14 @@ function peopleCell(ppl){
 const stMenu = document.createElement('div');
 stMenu.id = 'stMenu'; stMenu.hidden = true; stMenu.setAttribute('role', 'menu');
 document.body.appendChild(stMenu);
-let stFor = null;
+let stFor = null, stTask = false;
 function openStMenu(btn){
-  const it = findItem(btn.dataset.stq); if (!it) return;
-  if (stFor === it.id && !stMenu.hidden) { closeStMenu(); return; }
-  stFor = it.id;
+  const isTask = btn.dataset.tsq != null;
+  const it = isTask ? findTask(btn.dataset.tsq) : findItem(btn.dataset.stq); if (!it) return;
+  if (stFor === it.id && stTask === isTask && !stMenu.hidden) { closeStMenu(); return; }
+  stFor = it.id; stTask = isTask;
   const list = S.cats.statuses.slice(); if (list.indexOf(it.status) < 0) list.push(it.status);
-  stMenu.innerHTML = '<div class="sm-h">Đổi trạng thái việc #' + esc(it.no) + '</div>' + list.map(s =>
+  stMenu.innerHTML = '<div class="sm-h">Đổi trạng thái việc #' + (isTask ? 'G' : '') + esc(it.no) + '</div>' + list.map(s =>
     '<button type="button" role="menuitem" data-set="' + esc(s) + '" class="' + (s === it.status ? 'cur' : '') + '" style="--c:' + ST_HEX[stKey(s)] + '"><span class="dot"></span>' + esc(s) + '</button>').join('');
   stMenu.hidden = false;
   const r = btn.getBoundingClientRect(), w = stMenu.offsetWidth, h = stMenu.offsetHeight, vw = document.documentElement.clientWidth;
@@ -923,7 +1026,8 @@ function openStMenu(btn){
 function closeStMenu(){ stMenu.hidden = true; stFor = null; }
 stMenu.addEventListener('click', e => {
   const b = e.target.closest('[data-set]'); if (!b) return;
-  e.stopPropagation(); const id = stFor; closeStMenu(); quickStatus(id, b.dataset.set);
+  e.stopPropagation(); const id = stFor, isTask = stTask; closeStMenu();
+  if (isTask) taskQuickStatus(id, b.dataset.set); else quickStatus(id, b.dataset.set);
 });
 window.addEventListener('resize', closeStMenu);
 async function quickStatus(id, st){
@@ -932,8 +1036,8 @@ async function quickStatus(id, st){
     company: it.company, cname: it.cname, contact: it.contact, via: it.via || '' };
   try {
     const r = await api('apiSave', d);
-    upsert(S.dayItems, r); upsert(S.listItems, r); renderDay(); renderList();
-    toast('Việc #' + r.no + ' chuyển sang “' + r.status + '”.');
+    afterSave(r);
+    toast('Việc #' + r.no + ' chuyển sang “' + r.status + '”.' + (r.removed && r.removed.length ? ' Đã bỏ ' + r.removed.length + ' việc tự chuyển ở các ngày sau.' : ''));
   } catch(e){ fail(e); }
 }
 function statsHTML(items){
@@ -950,15 +1054,19 @@ function findItem(id){
 function upsert(list, it){ const i = list.findIndex(x => x.id === it.id); if (i >= 0) list[i] = it; else list.push(it); }
 function removeFrom(list, id){ const i = list.findIndex(x => x.id === id); if (i >= 0) list.splice(i, 1); }
 document.addEventListener('click', e => {
-  const sb = e.target.closest('[data-stq]');
+  const sb = e.target.closest('[data-stq],[data-tsq]');
   if (sb) { e.stopPropagation(); openStMenu(sb); return; }
   if (!e.target.closest('#stMenu')) closeStMenu();
+  const mv = e.target.closest('[data-tmv]');
+  if (mv) { const t = findTask(mv.dataset.tmv); if (t) openMove(t); return; }
+  const tk = e.target.closest('[data-tid]');
+  if (tk) { const t = findTask(tk.dataset.tid); if (t) openTask(t); return; }
   const b = e.target.closest('.job[data-id], tr[data-id]');
   if (b) { const it = findItem(b.dataset.id); if (it) openEdit(it); }
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !stMenu.hidden) { closeStMenu(); return; }
-  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.job[data-id]')) { e.preventDefault(); e.target.click(); }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.job[data-id], .job[data-tid]')) { e.preventDefault(); e.target.click(); }
 });
 
 /* ---------- Tab Nhập việc ---------- */
@@ -1014,7 +1122,7 @@ function renderDay(){
       '<td class="x-date">' + dmy(it.date) + '</td>' +
       cell(it.type, 'x-type') +
       '<td class="x-st" style="--c:' + ST_HEX[stKey(it.status)] + '">' + (it.canEdit ? '<button type="button" data-stq="' + esc(it.id) + '" title="Bấm để đổi trạng thái">' + esc(it.status) + '</button>' : esc(it.status)) + '</td>' +
-      cell(it.desc, 'x-desc') + cell(it.people[0], 'x-p') + cell(it.people[1], 'x-p') + cell(it.people[2], 'x-p') +
+      '<td class="x-desc">' + esc(it.desc) + (it.since || it.task ? '<span class="carry-l">' + carryTag(it) + ' ' + assnTag(it) + '</span>' : '') + '</td>' + cell(it.people[0], 'x-p') + cell(it.people[1], 'x-p') + cell(it.people[2], 'x-p') +
       cell(it.company, 'x-co') + cell(it.cname, 'x-cn') + cell(noteText(it), 'x-ct') + '</tr>').join('') +
     '</tbody></table></div>';
 }
@@ -1088,7 +1196,8 @@ function openEdit(it){
   $('#eDate').value = it.date; $('#eDate').readOnly = !it.canEdit;
   EF.set(it); EF.setRO(!it.canEdit);
   const who = S.users.find(u => u.email === it.by);
-  $('#eMeta').textContent = (it.by ? 'Người nhập: ' + ((who && who.name) || it.by) + '. ' : '') + (it.canEdit ? '' : 'Bạn chỉ sửa được việc do mình nhập.');
+  $('#eMeta').textContent = (it.by ? 'Người nhập: ' + ((who && who.name) || it.by) + '. ' : '') +
+    (it.since ? 'Việc chưa xong, tự chuyển sang từ ngày ' + dmy(it.since) + '. ' : '') + (it.canEdit ? '' : 'Bạn chỉ sửa được việc do mình nhập.');
   $('#eDel').hidden = !it.canEdit; $('#eSave').hidden = !it.canEdit;
   disarmDel();
   $('#editModal').hidden = false;
@@ -1106,9 +1215,8 @@ $('#eSave').onclick = async () => {
   const b = $('#eSave'); b.disabled = true;
   try {
     const r = await api('apiSave', d);
-    upsert(S.dayItems, r); upsert(S.listItems, r);
-    renderDay(); renderList();
-    closeModal(); toast('Đã lưu thay đổi.');
+    afterSave(r);
+    closeModal(); toast('Đã lưu thay đổi.' + (r.removed && r.removed.length ? ' Đã bỏ ' + r.removed.length + ' việc tự chuyển ở các ngày sau.' : ''));
   } catch(err){ fail(err); }
   finally { b.disabled = false; }
 };
@@ -1167,10 +1275,10 @@ function listFiltered(ignoreStatus){
   const per = $('#lPerson').value, st = ignoreStatus ? '' : $('#lStatus').value, q = norm($('#lSearch').value.trim());
   return S.listItems.filter(i => i.date >= S.listRange[0] && i.date <= S.listRange[1] &&
     (!per || i.people.indexOf(per) >= 0) && (!st || i.status === st) &&
-    (!q || norm([i.desc, i.type, i.company, i.cname, i.contact, i.via, i.people.join(' ')].join(' ')).indexOf(q) >= 0));
+    (!q || norm([i.desc, sinceTxt(i), i.type, i.company, i.cname, i.contact, i.via, i.people.join(' ')].join(' ')).indexOf(q) >= 0));
 }
 const wideMQ = window.matchMedia('(min-width:900px)');
-const onWide = () => { renderList(); renderDay(); };
+const onWide = () => { renderList(); renderDay(); renderTasks(); };
 if (wideMQ.addEventListener) wideMQ.addEventListener('change', onWide); else if (wideMQ.addListener) wideMQ.addListener(onWide);
 S.sort = { k: 'date', dir: -1 };
 function sortItems(items){
@@ -1212,7 +1320,7 @@ function tableHTML(items){
       '<td class="c-no">#' + esc(it.no) + '</td>' +
       '<td class="c-date">' + dmy(it.date) + '<small>' + wd(it.date) + '</small></td>' +
       '<td><span class="tag">' + esc(it.type) + '</span></td>' +
-      '<td class="c-desc"><span class="clamp" title="' + esc(it.desc) + '">' + esc(it.desc) + '</span></td>' +
+      '<td class="c-desc"><span class="clamp" title="' + esc(it.desc) + '">' + esc(it.desc) + '</span>' + (it.since || it.task ? '<span class="carry-l">' + carryTag(it) + ' ' + assnTag(it) + '</span>' : '') + '</td>' +
       '<td>' + peopleCell(it.people) + '</td>' +
       '<td class="c-cust">' + (cust ? '<span class="clamp" title="' + esc(custFull) + '">' + esc(cust) + '</span>' : '<span class="hint">–</span>') + '</td>' +
       '<td>' + stPill(it) + '</td>' +
@@ -1258,10 +1366,11 @@ $('#lSearch').addEventListener('input', () => { clearTimeout(sT); sT = setTimeou
 /* ---------- Tabs ---------- */
 const loaded = {};
 function goTab(t){
-  if (t === 'settings' && !(S.user && S.user.isAdmin)) t = 'entry';
+  if (t === 'settings' && !(S.user && S.user.isMgr)) t = 'entry';
   S.tab = t;
   $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
-  ['entry','list','export','settings'].forEach(x => { $('#v-' + x).hidden = x !== t; });
+  ['entry','list','export','settings','tasks'].forEach(x => { $('#v-' + x).hidden = x !== t; });
+  if (t === 'tasks') loadTasks();
   if (t === 'list' && !loaded.list) {
     loaded.list = true;
     const r = store.get('listRange', null) || quickRange('7d');
@@ -1341,7 +1450,7 @@ function measureItem(ctx, it, showCust){
   const W = IMG.W, P = IMG.PAD;
   ITEM.X = P; ITEM.TX = P + 112; ITEM.TW = W - P - 30 - ITEM.TX;
   ctx.font = fnt(600, 30);
-  const d = clip(ctx, wrap(ctx, it.desc, ITEM.TW), 12, ITEM.TW);
+  const d = clip(ctx, wrap(ctx, descImg(it), ITEM.TW), 12, ITEM.TW);
   ctx.font = fnt(400, 25);
   const pl = clip(ctx, wrap(ctx, 'Nhân sự: ' + it.people.join(', '), ITEM.TW), 2, ITEM.TW);
   const ct = [it.company, it.cname, noteText(it)].filter(Boolean).join(' · ');
@@ -1518,7 +1627,7 @@ async function buildTableImages(items, o){
 
   // sắp xếp theo ngày rồi số
   items = items.slice().sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.no - b.no);
-  const val = (it, k, i) => k === 'no' ? String(i + 1) : k === 'date' ? dmy(it.date) : k === 'p1' ? it.people[0] : k === 'p2' ? it.people[1] : k === 'p3' ? it.people[2] : k === 'contact' ? noteText(it) : it[k];
+  const val = (it, k, i) => k === 'no' ? String(i + 1) : k === 'date' ? dmy(it.date) : k === 'p1' ? it.people[0] : k === 'p2' ? it.people[1] : k === 'p3' ? it.people[2] : k === 'contact' ? noteText(it) : k === 'desc' ? descImg(it) : it[k];
   const rows = items.map((it, i) => {
     const cells = cols.map(c => {
       const v = String(val(it, c.k, i) || '').trim();
@@ -1645,35 +1754,231 @@ $('#xQuick').addEventListener('click', e => {
 });
 ['xFrom','xTo'].forEach(id => $('#' + id).addEventListener('change', () => markQuick($('#xQuick'), $('#xFrom').value, $('#xTo').value)));
 
-$('#xMake').onclick = async () => {
+// Lấy dữ liệu theo thiết lập (dùng chung cho Xuất ảnh và Xuất file)
+async function exportData(){
   let f = $('#xFrom').value, t = $('#xTo').value;
-  if (!f || !t) { toast('Chọn khoảng ngày.'); return; }
+  if (!f || !t) { toast('Chọn khoảng ngày.'); return null; }
   if (f > t) { const x = f; f = t; t = x; $('#xFrom').value = f; $('#xTo').value = t; }
+  const person = $('#xPerson').value;
+  let items = await api('apiList', f, t);
+  if (person) items = items.filter(i => i.people.indexOf(person) >= 0);
+  const opt = { from: f, to: t, person: person, title: $('#xTitle').value.trim(), cust: $('#xCust').checked };
+  return { items: items, opt: opt, base: 'BaoCao_' + f.replace(/-/g, '') + (t !== f ? '-' + t.replace(/-/g, '') : '') };
+}
+const emptyMsg = o => 'Không có công việc nào từ ' + dmy(o.from) + ' đến ' + dmy(o.to) + (o.person ? ' của ' + o.person : '') + '.';
+
+$('#xMake').onclick = async () => {
   const btn = $('#xMake'); btn.disabled = true; btn.textContent = 'Đang tạo ảnh…';
   try {
-    const person = $('#xPerson').value;
-    let items = await api('apiList', f, t);
-    if (person) items = items.filter(i => i.people.indexOf(person) >= 0);
+    const x = await exportData(); if (!x) return;
+    const items = x.items, opt = x.opt;
     revokeShots();
     if (!items.length) {
       $('#xBar').hidden = true;
-      $('#xOut').innerHTML = '<div class="empty">Không có công việc nào từ ' + dmy(f) + ' đến ' + dmy(t) + (person ? ' của ' + esc(person) : '') + '.</div>';
+      $('#xOut').innerHTML = '<div class="empty">' + esc(emptyMsg(opt)) + '</div>';
       return;
     }
     const mode = $('#xMode').value; store.set('xMode', mode);
-    const opt = { from: f, to: t, person: person, title: $('#xTitle').value.trim(), cust: $('#xCust').checked };
     const cvs = mode === 'cards' ? await buildImages(items, opt) : await buildTableImages(items, opt);
     $('#xOut').classList.toggle('wide', mode !== 'cards');
-    const base = 'BaoCao_' + f.replace(/-/g, '') + (t !== f ? '-' + t.replace(/-/g, '') : '');
     for (let i = 0; i < cvs.length; i++) {
       const blob = await toBlob(cvs[i]);
-      const name = base + (cvs.length > 1 ? '_' + (i + 1) + 'of' + cvs.length : '') + '.png';
+      const name = x.base + (cvs.length > 1 ? '_' + (i + 1) + 'of' + cvs.length : '') + '.png';
       shots.push({ blob: blob, url: URL.createObjectURL(blob), name: name, file: new File([blob], name, { type: 'image/png' }) });
     }
     renderShots(items.length);
   } catch(err){ fail(err); }
-  finally { btn.disabled = false; btn.textContent = 'Tạo ảnh báo cáo'; }
+  finally { btn.disabled = false; btn.textContent = 'Xuất ảnh'; }
 };
+
+$('#xFile').onclick = async () => {
+  const btn = $('#xFile'); btn.disabled = true; btn.textContent = 'Đang tạo file…';
+  try {
+    const x = await exportData(); if (!x) return;
+    if (!x.items.length) { toast(emptyMsg(x.opt)); return; }
+    const blob = buildXlsx(x.items, x.opt);
+    const name = x.base + '.xlsx';
+    const url = URL.createObjectURL(blob);
+    download({ url: url, name: name });
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    toast('Đã xuất file ' + name + ' (' + x.items.length + ' việc).');
+  } catch(err){ fail(err); }
+  finally { btn.disabled = false; btn.textContent = 'Xuất file'; }
+};
+
+/* =====================================================================
+   XUẤT FILE EXCEL (.xlsx) – tự tạo, không cần thư viện ngoài
+   Bố cục giống tab Daily RP: Từ ngày/Đến ngày, Kết quả làm việc, Bảng công việc chi tiết
+   ===================================================================== */
+const XL = (function(){
+  // ---- ZIP (lưu, không nén) ----
+  const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  const crc32 = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  function zip(files){
+    const enc = new TextEncoder(), parts = [], central = []; let off = 0;
+    files.forEach(f => {
+      const name = enc.encode(f.name), data = enc.encode(f.data), crc = crc32(data);
+      const h = new DataView(new ArrayBuffer(30));
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+      h.setUint16(10, 0, true); h.setUint16(12, 0x21, true); h.setUint32(14, crc, true);
+      h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, name.length, true); h.setUint16(28, 0, true);
+      parts.push(new Uint8Array(h.buffer), name, data);
+      const c = new DataView(new ArrayBuffer(46));
+      c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true);
+      c.setUint16(10, 0, true); c.setUint16(12, 0, true); c.setUint16(14, 0x21, true); c.setUint32(16, crc, true);
+      c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, name.length, true);
+      c.setUint32(42, off, true);
+      central.push(new Uint8Array(c.buffer), name);
+      off += 30 + name.length + data.length;
+    });
+    const csize = central.reduce((a, b) => a + b.length, 0);
+    const e = new DataView(new ArrayBuffer(22));
+    e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true);
+    e.setUint32(12, csize, true); e.setUint32(16, off, true);
+    return new Blob(parts.concat(central, [new Uint8Array(e.buffer)]), { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  }
+  const xe = v => String(v == null ? '' : v).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const colName = i => { let s = ''; i++; while (i) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; };
+  const serial = iso => { const a = iso.split('-').map(Number); return (Date.UTC(a[0], a[1] - 1, a[2]) - Date.UTC(1899, 11, 30)) / 864e5; };
+  return { zip: zip, xe: xe, colName: colName, serial: serial };
+})();
+
+function buildXlsx(items, o){
+  const H = c => 'FF' + c.replace('#', '').toUpperCase();
+  const KEYS = ['ok', 'bad', 'watch', 'other'];
+  // fonts
+  const fonts = [
+    '<font><sz val="11"/><name val="Arial"/></font>',                                   // 0 thường
+    '<font><b/><sz val="16"/><color rgb="FFFFFFFF"/><name val="Arial"/></font>',        // 1 tiêu đề
+    '<font><b/><sz val="12"/><color rgb="' + H(C.bandSub) + '"/><name val="Arial"/></font>', // 2 dòng ngày
+    '<font><b/><sz val="11"/><name val="Arial"/></font>',                               // 3 đậm
+    '<font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Arial"/></font>',        // 4 đậm trắng
+    '<font><b/><sz val="12"/><name val="Arial"/></font>'                                // 5 đậm 12
+  ].concat(KEYS.map(k => '<font><b/><sz val="12"/><color rgb="' + H(IMG_HEX[k]) + '"/><name val="Arial"/></font>')); // 6..9
+  const fill = c => '<fill><patternFill patternType="solid"><fgColor rgb="' + H(c) + '"/><bgColor indexed="64"/></patternFill></fill>';
+  const fills = ['<fill><patternFill patternType="none"/></fill>', '<fill><patternFill patternType="gray125"/></fill>',
+    fill(C.band), fill('#FFF1E4'), fill(C.navySoft), fill(C.sunLight), fill(C.head)].concat(KEYS.map(k => fill(IMG_HEX[k]))); // 2..6, 7..10
+  const borders = ['<border><left/><right/><top/><bottom/><diagonal/></border>',
+    '<border>' + ['left', 'right', 'top', 'bottom'].map(x => '<' + x + ' style="thin"><color rgb="' + H(C.line2) + '"/></' + x + '>').join('') + '<diagonal/></border>'];
+  const xfs = [];
+  const xf = (font, fillI, border, h, wrap, numFmt) => {
+    xfs.push('<xf numFmtId="' + (numFmt || 0) + '" fontId="' + font + '" fillId="' + fillI + '" borderId="' + border + '" xfId="0"' +
+      (numFmt ? ' applyNumberFormat="1"' : '') + ' applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1">' +
+      '<alignment vertical="center"' + (h ? ' horizontal="' + h + '"' : '') + (wrap ? ' wrapText="1"' : '') + '/></xf>');
+    return xfs.length - 1;
+  };
+  const S0 = xf(0, 0, 0);
+  const sTitle = xf(1, 2, 0, 'left'), sSub = xf(2, 2, 0, 'left');
+  const sLbl = xf(3, 0, 1, 'left'), sDate = xf(3, 3, 1, 'center', false, 164), sVal = xf(3, 3, 1, 'left');
+  const sHead = xf(3, 4, 1, 'left'), sHeadC = xf(3, 4, 1, 'center');
+  const sTot = xf(3, 0, 1, 'left'), sTotV = xf(5, 0, 1, 'center');
+  const sStL = {}, sStV = {}, sStCell = {};
+  KEYS.forEach((k, i) => { sStL[k] = xf(4, 7 + i, 1, 'left'); sStV[k] = xf(6 + i, 0, 1, 'center'); sStCell[k] = xf(4, 7 + i, 1, 'center', true); });
+  const sSec = xf(5, 0, 0, 'left'), sTh = xf(3, 5, 1, 'center', true);
+  const sTxt = [xf(0, 0, 1, 'left', true), xf(0, 6, 1, 'left', true)];
+  const sCen = [xf(0, 0, 1, 'center', true), xf(0, 6, 1, 'center', true)];
+  const sDt = [xf(0, 0, 1, 'center', false, 164), xf(0, 6, 1, 'center', false, 164)];
+  const styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+    '<numFmts count="1"><numFmt numFmtId="164" formatCode="dd/mm/yyyy"/></numFmts>' +
+    '<fonts count="' + fonts.length + '">' + fonts.join('') + '</fonts>' +
+    '<fills count="' + fills.length + '">' + fills.join('') + '</fills>' +
+    '<borders count="' + borders.length + '">' + borders.join('') + '</borders>' +
+    '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+    '<cellXfs count="' + xfs.length + '">' + xfs.join('') + '</cellXfs>' +
+    '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+
+  // ---- cột ----
+  let cols = [['No.', 6], ['Time', 12], ['Type', 13], ['Status', 16], ['Describe', 50], ['Personnel 1', 20], ['Personnel 2', 20], ['Personnel 3', 20]];
+  if (o.cust) cols = cols.concat([['Company', 26], ['Người liên hệ', 18], ['Ghi chú', 36]]);
+  const last = XL.colName(cols.length - 1);
+  const rows = [], merges = [];
+  let r = 0;
+  const cell = (ci, v, st, kind) => {
+    const ref = XL.colName(ci) + r;
+    if (v === '' || v == null) return '<c r="' + ref + '" s="' + st + '"/>';
+    if (kind === 'n') return '<c r="' + ref + '" s="' + st + '"><v>' + v + '</v></c>';
+    return '<c r="' + ref + '" s="' + st + '" t="inlineStr"><is><t xml:space="preserve">' + XL.xe(v) + '</t></is></c>';
+  };
+  const row = (cells, ht) => { rows.push('<row r="' + r + '"' + (ht ? ' ht="' + ht + '" customHeight="1"' : '') + '>' + cells.join('') + '</row>'); };
+  const bandRow = (text, st, ht) => { r++; const c = [cell(0, text, st)]; for (let i = 1; i < cols.length; i++) c.push(cell(i, '', st)); row(c, ht); merges.push('A' + r + ':' + last + r); };
+  // dòng 2 cột nhãn (A:C) + giá trị (D)
+  const kv = (label, val, sl, sv, kind, wide) => {
+    r++; row([cell(0, label, sl), cell(1, '', sl), cell(2, '', sl), cell(3, val, sv, kind)].concat(wide ? [cell(4, '', sv)] : []));
+    merges.push('A' + r + ':C' + r); if (wide) merges.push('D' + r + ':E' + r);
+  };
+
+  const multi = o.from !== o.to;
+  bandRow(o.title || 'BÁO CÁO CÔNG VIỆC NGÀY', sTitle, 32);
+  bandRow((multi ? 'Từ ' + fmtDay(o.from) + ' đến ' + fmtDay(o.to) : fmtDay(o.from)) + (o.person ? '   ·   Nhân sự: ' + o.person : ''), sSub, 22);
+  r++; row([]);
+  kv('Từ ngày', XL.serial(o.from), sLbl, sDate, 'n');
+  kv('Đến ngày', XL.serial(o.to), sLbl, sDate, 'n');
+  kv('Nhân sự', o.person || 'Tất cả nhân sự', sLbl, sVal, 's', true);
+  r++; row([]);
+  // Kết quả làm việc
+  const by = {}; items.forEach(i => { by[i.status] = (by[i.status] || 0) + 1; });
+  const sts = S.cats.statuses.slice(); Object.keys(by).forEach(z => { if (sts.indexOf(z) < 0) sts.push(z); });
+  kv('Kết quả làm việc', 'Số lượng', sHead, sHeadC);
+  kv('Tổng số công việc', items.length, sTot, sTotV, 'n');
+  sts.forEach(z => { const k = stKey(z); kv(z, by[z] || 0, sStL[k], sStV[k], 'n'); });
+  r++; row([]);
+  // Bảng chi tiết
+  r++; row([cell(0, 'BẢNG CÔNG VIỆC CHI TIẾT', sSec)], 22);
+  r++; row(cols.map((c, i) => cell(i, c[0], sTh)), 22);
+  const headRow = r;
+  const list = items.slice().sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.no - b.no);
+  list.forEach((it, i) => {
+    r++;
+    const z = i % 2;
+    const vals = [[i + 1, sCen[z], 'n'], [XL.serial(it.date), sDt[z], 'n'], [it.type, sCen[z]], [it.status, sStCell[stKey(it.status)]],
+      [descImg(it), sTxt[z]], [it.people[0] || '', sTxt[z]], [it.people[1] || '', sTxt[z]], [it.people[2] || '', sTxt[z]]];
+    if (o.cust) vals.push([it.company, sTxt[z]], [it.cname, sTxt[z]], [noteText(it), sTxt[z]]);
+    // ước lượng chiều cao dòng (tối thiểu 2 dòng chữ)
+    let lines = 2;
+    vals.forEach((v, ci) => {
+      const w = cols[ci][1] * 1.1;
+      const n = String(v[0] == null ? '' : v[0]).split('\n').reduce((a, seg) => a + Math.max(1, Math.ceil(seg.length / w)), 0);
+      if (typeof v[0] === 'string' && n > lines) lines = n;
+    });
+    row(vals.map((v, ci) => cell(ci, v[0], v[1], v[2])), Math.min(409, lines * 15 + 6));
+  });
+
+  const sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+    '<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>' +
+    '<sheetViews><sheetView workbookViewId="0" showGridLines="0"/></sheetViews>' +
+    '<sheetFormatPr defaultRowHeight="15"/>' +
+    '<cols>' + cols.map((c, i) => '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + c[1] + '" customWidth="1"/>').join('') + '</cols>' +
+    '<sheetData>' + rows.join('') + '</sheetData>' +
+    '<autoFilter ref="A' + headRow + ':' + last + Math.max(headRow, r) + '"/>' +
+    '<mergeCells count="' + merges.length + '">' + merges.map(m => '<mergeCell ref="' + m + '"/>').join('') + '</mergeCells>' +
+    '<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/>' +
+    '<pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>' +
+    '</worksheet>';
+  const wb = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+    '<sheets><sheet name="Báo cáo" sheetId="1" r:id="rId1"/></sheets>' +
+    '<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">\'Báo cáo\'!$A$' + headRow + ':$' + last + '$' + Math.max(headRow, r) + '</definedName>' +
+    '<definedName name="_xlnm.Print_Titles" localSheetId="0">\'Báo cáo\'!$' + headRow + ':$' + headRow + '</definedName></definedNames></workbook>';
+  return XL.zip([
+    { name: '[Content_Types].xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>' +
+      '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
+      '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' +
+      '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>' },
+    { name: '_rels/.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { name: 'xl/workbook.xml', data: wb },
+    { name: 'xl/_rels/workbook.xml.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>' +
+      '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' },
+    { name: 'xl/worksheets/sheet1.xml', data: sheet },
+    { name: 'xl/styles.xml', data: styles }
+  ]);
+}
+
 function renderShots(n){
   const n2 = shots.length, shareOne = shots.length && canShareFiles([shots[0].file]);
   $('#xBar').hidden = false;
@@ -1708,6 +2013,223 @@ $('#xAll').onclick = async () => {
   for (let i = 0; i < shots.length; i++) { download(shots[i]); await new Promise(r => setTimeout(r, 500)); }
   if (shots.length > 1) toast('Đã tải ' + shots.length + ' ảnh. Nếu trình duyệt hỏi, hãy chọn Cho phép tải nhiều tệp.');
 };
+
+/* =====================================================================
+   GIAO VIỆC (tab 5)
+   Admin + Quản lý: giao, sửa, chuyển, xoá, xem tất cả. Nhân viên: việc của mình, đổi trạng thái.
+   ===================================================================== */
+const TF = new JobForm($('#taskForm'), 'a');
+S.tk = { person: '', status: '' };
+function findTask(id){ return S.tasks.find(x => x.id === id); }
+let taskReq = 0;
+async function loadTasks(){
+  const my = ++taskReq;
+  if (!S.tasksReady) { $('#kMyList').innerHTML = '<div class="empty">Đang tải…</div>'; $('#kList').innerHTML = ''; }
+  try {
+    const r = await api('apiTasks');
+    if (my !== taskReq) return;
+    S.tasks = r; S.tasksReady = true; renderTasks();
+  } catch(e){ if (my === taskReq) { $('#kMyList').innerHTML = '<div class="empty">Không tải được danh sách việc giao.</div>'; fail(e); } }
+}
+const tOrder = t => stKey(t.status) === 'ok' ? 1 : 0;
+function sortTasks(a){ return a.slice().sort((x, y) => tOrder(x) - tOrder(y) || (x.date < y.date ? 1 : x.date > y.date ? -1 : y.no - x.no)); }
+function tStPill(t){
+  const k = stKey(t.status);
+  return t.canStatus
+    ? '<button type="button" class="st st-q k-' + k + '" data-tsq="' + esc(t.id) + '" title="Bấm để đổi trạng thái">' + esc(t.status) + '</button>'
+    : '<span class="st k-' + k + '">' + esc(t.status) + '</span>';
+}
+function taskCard(t){
+  const cust = [t.company, t.cname, noteText(t)].filter(Boolean).join(' · ');
+  return '<div class="job" role="button" tabindex="0" data-tid="' + esc(t.id) + '">' +
+    '<span class="no num">#G' + esc(t.no) + '</span>' +
+    '<span style="min-width:0;display:block">' +
+      '<span class="job-top"><span class="tag">' + esc(t.type) + '</span>' + tStPill(t) + '</span>' +
+      '<span class="job-desc" style="display:block">' + esc(t.desc) + '</span>' +
+      '<span class="job-meta"><span>' + esc(t.people.join(', ')) + '</span>' + (cust ? '<span>' + esc(cust) + '</span>' : '') +
+        '<span>Giao bởi ' + esc(t.byName) + ' · ' + dmy(t.date) + '</span></span>' +
+      (t.canEdit ? '<span class="job-act"><button type="button" class="mv" data-tmv="' + esc(t.id) + '">Chuyển việc</button></span>' : '') +
+    '</span></div>';
+}
+function taskTable(items, mgr){
+  const head = ['Số','Ngày giao','Loại việc','Mô tả công việc','Nhân sự','Khách hàng','Trạng thái'].concat(mgr ? [''] : []);
+  return '<div class="tbl-wrap"><table class="jt tk"><thead><tr>' + head.map(h => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' +
+    items.map(t => {
+      const cust = [t.company, t.cname].filter(Boolean).join(' · ') || noteText(t);
+      const custFull = [t.company, t.cname, noteText(t)].filter(Boolean).join(' · ');
+      return '<tr data-tid="' + esc(t.id) + '">' +
+        '<td class="c-no">#G' + esc(t.no) + '</td>' +
+        '<td class="c-date">' + dmy(t.date) + '<small title="Người giao: ' + esc(t.byName) + '">bởi ' + esc(shortName(t.byName)) + '</small></td>' +
+        '<td><span class="tag">' + esc(t.type) + '</span></td>' +
+        '<td class="c-desc"><span class="clamp" title="' + esc(t.desc) + '">' + esc(t.desc) + '</span></td>' +
+        '<td>' + peopleCell(t.people) + '</td>' +
+        '<td class="c-cust">' + (cust ? '<span class="clamp" title="' + esc(custFull) + '">' + esc(cust) + '</span>' : '<span class="hint">–</span>') + '</td>' +
+        '<td>' + tStPill(t) + '</td>' +
+        (mgr ? '<td><button type="button" class="mv" data-tmv="' + esc(t.id) + '">Chuyển việc</button></td>' : '') + '</tr>';
+    }).join('') + '</tbody></table></div>';
+}
+function fillSel(sel, list, first){
+  const v = sel.value;
+  sel.innerHTML = '<option value="">' + first + '</option>' + list.map(x => '<option>' + esc(x) + '</option>').join('');
+  sel.value = list.indexOf(v) >= 0 ? v : '';
+}
+function renderTasks(){
+  if (!S.tasksReady || !S.user) return;
+  closeStMenu();
+  fillSel($('#kMyStatus'), S.cats.statuses, 'Tất cả trạng thái');
+  fillSel($('#kStatus'), S.cats.statuses, 'Tất cả trạng thái');
+  fillSel($('#kPerson'), S.cats.people, 'Tất cả nhân sự');
+  // Việc của tôi
+  const ms = $('#kMyStatus').value;
+  const mineAll = S.tasks.filter(t => t.mine), mine = sortTasks(mineAll.filter(t => !ms || t.status === ms));
+  const open = mineAll.filter(t => stKey(t.status) !== 'ok').length;
+  $('#kMyCount').textContent = mineAll.length ? mineAll.length + ' việc · ' + open + ' chưa hoàn thành' : '';
+  $('#kMyList').innerHTML = !mineAll.length ? '<div class="empty">Chưa có việc nào được giao cho bạn.</div>'
+    : !mine.length ? '<div class="empty">Không có việc nào khớp bộ lọc.</div>'
+    : wideMQ.matches ? taskTable(mine, false) : mine.map(taskCard).join('');
+  // Quản lý giao việc
+  const mgr = !!S.user.isMgr;
+  $('#kMgr').hidden = !mgr;
+  if (!mgr) return;
+  const per = $('#kPerson').value, st = $('#kStatus').value, q = norm($('#kSearch').value.trim());
+  const matchQ = t => !q || norm([t.desc, t.type, t.company, t.cname, t.contact, t.via, t.byName, t.people.join(' '), '#g' + t.no].join(' ')).indexOf(q) >= 0;
+  const base = S.tasks.filter(t => matchQ(t) && (!per || t.people.indexOf(per) >= 0));
+  const items = sortTasks(base.filter(t => !st || t.status === st));
+  // Ô tổng hợp
+  const by = {}, n = base.length; base.forEach(t => { by[t.status] = (by[t.status] || 0) + 1; });
+  const names = S.cats.statuses.slice(); Object.keys(by).forEach(x => { if (names.indexOf(x) < 0) names.push(x); });
+  $('#kStats').innerHTML = '<div class="kpi"><span class="k-t">Tổng số việc</span><span class="k-n">' + n + '</span><span class="bar"><i style="width:100%"></i></span></div>' +
+    names.map(x => { const c = by[x] || 0, pct = n ? Math.round(c * 100 / n) : 0;
+      return '<button type="button" class="kpi' + (st === x ? ' on' : '') + '" data-kks="' + esc(x) + '" style="--c:' + ST_HEX[stKey(x)] + '" aria-pressed="' + (st === x) + '">' +
+        '<span class="k-t">' + esc(x) + '</span><span class="k-n">' + c + '</span><span class="k-s"><span>' + (st === x ? 'Đang lọc · bấm để bỏ' : 'Bấm để lọc') + '</span><b>' + pct + '%</b></span>' +
+        '<span class="bar"><i style="width:' + pct + '%"></i></span></button>'; }).join('');
+  // Theo từng người (bấm để lọc)
+  const pc = {};
+  S.tasks.filter(t => matchQ(t) && (!st || t.status === st)).forEach(t => t.people.forEach(p => {
+    const o = pc[p] = pc[p] || { n: 0, ok: 0 }; o.n++; if (stKey(t.status) === 'ok') o.ok++; }));
+  const pk = Object.keys(pc).sort((a, b) => pc[b].n - pc[a].n);
+  $('#kPeople').innerHTML = pk.length ? '<div class="sec-title">Theo nhân sự</div>' + pk.map(p =>
+    '<button type="button" class="ps' + (per === p ? ' on' : '') + '" data-kkp="' + esc(p) + '" aria-pressed="' + (per === p) + '"><span class="av" style="--a:' + avColor(p) + '">' + esc(initial(p)) + '</span><b>' + esc(p) + '</b><span>' + pc[p].n + ' việc · ' + pc[p].ok + ' xong</span></button>').join('') : '';
+  $('#kCount').textContent = items.length + ' việc' + (items.length !== S.tasks.length ? ' (đã lọc từ ' + S.tasks.length + ')' : '');
+  $('#kList').innerHTML = !S.tasks.length ? '<div class="empty">Chưa giao việc nào. Bấm “+ Giao việc” để bắt đầu.</div>'
+    : !items.length ? '<div class="empty">Không có việc nào khớp bộ lọc.</div>'
+    : wideMQ.matches ? taskTable(items, true) : items.map(taskCard).join('');
+}
+$('#kMyStatus').addEventListener('change', renderTasks);
+$('#kPerson').addEventListener('change', renderTasks);
+$('#kStatus').addEventListener('change', renderTasks);
+let kT = 0;
+$('#kSearch').addEventListener('input', () => { clearTimeout(kT); kT = setTimeout(renderTasks, 150); });
+$('#kStats').addEventListener('click', e => {
+  const b = e.target.closest('[data-kks]'); if (!b) return;
+  const sel = $('#kStatus'); sel.value = sel.value === b.dataset.kks ? '' : b.dataset.kks; renderTasks();
+});
+$('#kPeople').addEventListener('click', e => {
+  const b = e.target.closest('[data-kkp]'); if (!b) return;
+  const sel = $('#kPerson'); sel.value = sel.value === b.dataset.kkp ? '' : b.dataset.kkp; renderTasks();
+});
+function afterTaskSave(r, msg){
+  upsert(S.tasks, r.task);
+  if (r.report) { upsert(S.dayItems, r.report); upsert(S.listItems, r.report); renderDay(); renderList(); }
+  renderTasks();
+  toast(msg + (r.report ? ' Đã ghi vào báo cáo hôm nay.' : ''));
+}
+async function taskQuickStatus(id, st){
+  const t = findTask(id); if (!t || t.status === st) return;
+  const d = Object.assign({}, t, { status: st, people: t.people.slice() });
+  try { const r = await api('apiTaskSave', d); afterTaskSave(r, 'Việc #G' + r.task.no + ' chuyển sang “' + r.task.status + '”.'); }
+  catch(e){ fail(e); }
+}
+// Cửa sổ giao / sửa việc
+let tEditing = null, kDelT = 0;
+function openTask(t){
+  tEditing = t || null;
+  const isNew = !t, mgr = !!S.user.isMgr;
+  $('#kTitle').textContent = isNew ? 'Giao việc' : (mgr ? 'Sửa việc giao #G' + t.no : 'Việc được giao #G' + t.no);
+  $('#kTplWrap').hidden = !(isNew && S.templates.length);
+  $('#kTplRow').innerHTML = S.templates.map((x, i) => '<button type="button" class="tpl" data-ktpl="' + i + '" title="' + esc(x.desc) + '">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>' + esc(x.name) + '</button>').join('');
+  if (isNew) TF.set({ type: '', status: S.cats.statuses[0] || '', people: [] }); else TF.set(t);
+  TF.setRO(!isNew && !mgr, true);
+  $('#kMeta').textContent = t ? 'Giao bởi ' + t.byName + ' ngày ' + dmy(t.date) + '.' + (mgr ? '' : ' Bạn chỉ đổi được trạng thái.') : '';
+  $('#kDel').hidden = isNew || !mgr; $('#kMove').hidden = isNew || !mgr;
+  $('#kSave').textContent = isNew ? 'Giao việc' : 'Lưu thay đổi';
+  $('#kSave').hidden = !isNew && !t.canStatus;
+  disarmKDel();
+  $('#taskModal').hidden = false;
+}
+function closeTask(){ $('#taskModal').hidden = true; tEditing = null; disarmKDel(); }
+function disarmKDel(){ clearTimeout(kDelT); const b = $('#kDel'); b.classList.remove('armed'); b.textContent = 'Xoá'; }
+$('#kNew').onclick = () => openTask(null);
+$$('#taskModal [data-kclose]').forEach(b => b.onclick = closeTask);
+$('#taskModal').addEventListener('click', e => { if (e.target.id === 'taskModal') closeTask(); });
+$('#kTplRow').addEventListener('click', e => {
+  const b = e.target.closest('[data-ktpl]'); if (!b) return;
+  const x = S.templates[+b.dataset.ktpl], cur = TF.get();
+  TF.set({ type: x.type || cur.type, status: x.status || cur.status || S.cats.statuses[0] || '', desc: x.desc, people: cur.people,
+    company: cur.company, cname: cur.cname, contact: cur.contact, via: cur.via });
+  $$('#kTplRow .tpl').forEach(y => y.classList.toggle('on', y === b));
+});
+$('#kSave').onclick = async () => {
+  const d = TF.get(), isNew = !tEditing;
+  if (tEditing) d.id = tEditing.id;
+  if (isNew || S.user.isMgr) { d.date = todayISO(); const bad = checkItem(d); if (bad) { toast(bad); return; } }
+  const b = $('#kSave'); b.disabled = true;
+  try {
+    const r = await api('apiTaskSave', d);
+    closeTask();
+    afterTaskSave(r, isNew ? 'Đã giao việc #G' + r.task.no + ' cho ' + r.task.people.join(', ') + '.' : 'Đã lưu việc #G' + r.task.no + '.');
+  } catch(err){ fail(err); }
+  finally { b.disabled = false; }
+};
+$('#kDel').onclick = async () => {
+  if (!tEditing) return;
+  const b = $('#kDel');
+  if (!b.classList.contains('armed')) { b.classList.add('armed'); b.textContent = 'Bấm lần nữa để xoá'; kDelT = setTimeout(disarmKDel, 3500); return; }
+  disarmKDel(); b.disabled = true;
+  const id = tEditing.id;
+  try { await api('apiTaskDelete', id); removeFrom(S.tasks, id); closeTask(); renderTasks(); toast('Đã xoá việc giao.'); }
+  catch(err){ fail(err); }
+  finally { b.disabled = false; }
+};
+$('#kMove').onclick = () => { const t = tEditing; if (t) { closeTask(); openMove(t); } };
+// Cửa sổ chuyển việc
+let mvTask = null, mvPick = [];
+function paintMove(){
+  const list = S.cats.people.slice(); mvPick.forEach(p => { if (list.indexOf(p) < 0) list.push(p); });
+  $('#mvList').innerHTML = list.map(p => { const i = mvPick.indexOf(p);
+    return '<button type="button" class="chip' + (i >= 0 ? ' on' : '') + '" data-mv="' + esc(p) + '" aria-pressed="' + (i >= 0) + '">' +
+      (i >= 0 ? '<span class="ord">' + (i + 1) + '</span>' : '') + esc(p) + '</button>'; }).join('');
+}
+function openMove(t){
+  mvTask = t; mvPick = [];
+  $('#mvTitle').textContent = 'Chuyển việc #G' + t.no + (t.people.length ? ' (đang giao: ' + t.people.join(', ') + ')' : '');
+  paintMove(); $('#moveModal').hidden = false;
+}
+function closeMove(){ $('#moveModal').hidden = true; mvTask = null; }
+$$('#moveModal [data-mclose]').forEach(b => b.onclick = closeMove);
+$('#moveModal').addEventListener('click', e => { if (e.target.id === 'moveModal') closeMove(); });
+$('#mvList').addEventListener('click', e => {
+  const b = e.target.closest('[data-mv]'); if (!b) return;
+  const v = b.dataset.mv, i = mvPick.indexOf(v);
+  if (i >= 0) mvPick.splice(i, 1); else if (mvPick.length < 3) mvPick.push(v); else { toast('Chỉ chọn tối đa 3 người.'); return; }
+  paintMove();
+});
+$('#mvOk').onclick = async () => {
+  if (!mvTask) return;
+  if (!mvPick.length) { toast('Chọn người nhận việc.'); return; }
+  const b = $('#mvOk'); b.disabled = true;
+  try {
+    const t = await api('apiTaskTransfer', mvTask.id, mvPick.slice());
+    upsert(S.tasks, t); closeMove(); renderTasks();
+    toast('Đã chuyển việc #G' + t.no + ' cho ' + t.people.join(', ') + '.');
+  } catch(err){ fail(err); }
+  finally { b.disabled = false; }
+};
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (!$('#moveModal').hidden) closeMove(); else if (!$('#taskModal').hidden) closeTask();
+});
 
 /* =====================================================================
    CÀI ĐẶT (chỉ Quản lý)
@@ -1753,11 +2275,11 @@ function renderUserRows(){
       '<input type="email" class="wide" id="uE' + i + '" data-u="' + i + '" data-f="email" value="' + esc(u.email) + '" placeholder="ten@gmail.com" aria-label="Email"' + (self ? ' readonly' : '') + '>' +
       '<input type="text" id="uN' + i + '" data-u="' + i + '" data-f="name" value="' + esc(u.name) + '" list="peopleList" placeholder="Họ tên" aria-label="Họ tên">' +
       '<select id="uR' + i + '" data-u="' + i + '" data-f="role" aria-label="Vai trò"' + (self ? ' disabled' : '') + '>' +
-        ['Nhân viên','Quản lý'].map(r => '<option' + (u.role === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select>' +
+        ['Nhân viên','Quản lý','Admin'].map(r => '<option' + (u.role === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select>' +
     '</div><button type="button" class="del-x" data-udel="' + i + '" aria-label="Xoá người dùng"' + (self ? ' disabled title="Không thể tự xoá mình"' : '') + '>×</button></div>';
   }).join('');
 }
-function renderSettings(){ renderCats(); renderTplRows(); renderUserRows(); markDirty(); }
+function renderSettings(){ renderCats(); renderTplRows(); if (S.user && S.user.isAdmin) renderUserRows(); markDirty(); }
 $('#v-settings').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.del != null) { D[b.dataset.cat].splice(+b.dataset.del, 1); renderCats(); renderTplRows(); markDirty(); }
@@ -1973,14 +2495,17 @@ function applyInit(r){
   S.user = r.user; S.cats = r.cats; S.templates = r.templates || []; S.users = r.users || [];
   if (r.sheetUrl) { $('#sheetLink').href = r.sheetUrl; $('#sheetLink').hidden = false; }
   renderWho();
-  $('#tabSettings').hidden = !S.user.isAdmin;
-  if (!S.user.isAdmin && S.tab === 'settings') goTab('entry');
+  $('#tabSettings').hidden = !S.user.isMgr;          // Admin + Quản lý: Danh mục, Mẫu đề xuất nhanh
+  $('#usersPanel').hidden = !S.user.isAdmin;          // Người dùng: chỉ Admin
+  if (!S.user.isMgr && S.tab === 'settings') goTab('entry');
+  S.tasksReady = false; if (S.tab === 'tasks') loadTasks();
   D = null;
   afterCatsChange();
 }
 function startWith(r){
   if (r.denied) { store.set('token', ''); showGate('denied', r.email || '(không rõ email)'); return; }
   applyInit(r);
+  if (r.carried) setTimeout(() => toast('Đã tự chuyển ' + r.carried + ' việc chưa xong sang hôm nay.', { ms: 5000 }), 600);
   if (!S.user.name) showGate('who');
   else if (store.get('skipGate', false)) enterApp();
   else showGate('ok');
@@ -2001,7 +2526,7 @@ async function boot(){
    Dữ liệu mẫu nằm trong bộ nhớ, tải lại trang là mất.
    ===================================================================== */
 const Demo = (function(){
-  const ADMIN = 'Quản lý', STAFF = 'Nhân viên';
+  const ADMIN = 'Admin', MGR = 'Quản lý', STAFF = 'Nhân viên';
   const PPL = ['Bùi Nguyễn Anh Tuấn', 'Nguyễn Minh Châu', 'Nguyễn Nhật Cảnh'];
   const ME = 'anhtuan22775@gmail.com', CHAU = 'chau.service@gmail.com', CANH = 'canh.service@gmail.com';
   let role = ADMIN, seq = 0, nextNo = 1;
@@ -2014,7 +2539,8 @@ const Demo = (function(){
       { name: 'Email bảo hành', type: 'WSHCM', status: 'Hoàn thành', desc: 'Kiểm tra và phản hồi email bảo hành' },
       { name: 'Nhận hàng Mekong', type: 'Nhận hàng', status: 'Hoàn thành', desc: 'Nhận hàng từ Mekong' }
     ],
-    users: [ { email: ME, name: PPL[0], role: ADMIN }, { email: CHAU, name: PPL[1], role: STAFF }, { email: CANH, name: PPL[2], role: STAFF } ],
+    users: [ { email: ME, name: PPL[0], role: ADMIN }, { email: CHAU, name: PPL[1], role: MGR }, { email: CANH, name: PPL[2], role: STAFF } ],
+    tasks: [],
     items: []
   };
   const T = todayISO();
@@ -2047,12 +2573,79 @@ const Demo = (function(){
   add(0, 'HTKT', 'Đang theo dõi', 'Hỗ trợ từ xa cập nhật firmware SG250HX, chờ khách xác nhận', [PPL[0], PPL[1]], ME, { company: 'Trang trại Solar Bình Thuận', contact: 'Qua zalo helpdesk B - Plant Bình Thuận' });
   add(0, 'Đóng gói', 'Hoàn thành', 'Đóng gói 3 inverter SG20RT trả đại lý INPOS', [PPL[2]], CANH);
 
-  function me(){ const u = db.users.find(x => x.email === ME); return { email: ME, name: u ? u.name : '', role: role, isAdmin: role === ADMIN }; }
-  function view(it){ const u = me(); return Object.assign({}, it, { canEdit: u.isAdmin || it.by === ME }); }
+  // Tự chuyển việc Chưa xong / Đang theo dõi của ngày làm việc trước sang hôm nay (bỏ qua Chủ nhật)
+  function carry(){
+    if (parseISO(T).getDay() === 0) return 0;
+    let src = addDays(T, -1); if (parseISO(src).getDay() === 0) src = addDays(src, -1);
+    let n = 0;
+    db.items.filter(i => i.date === src && !i.task && (stKey(i.status) === 'bad' || stKey(i.status) === 'watch') && !db.items.some(x => x.from === i.id))
+      .forEach(i => { db.items.push(Object.assign({}, i, { id: 'd' + (++seq), no: nextNo++, date: T, from: i.id, since: i.since || i.date, fresh: true })); n++; });
+    return n;
+  }
+  let carriedOnce = carry();
+  function me(){ const u = db.users.find(x => x.email === ME); return { email: ME, name: u ? u.name : '', role: role, isAdmin: role === ADMIN, isMgr: role !== STAFF }; }
+  function view(it){ const u = me(); return Object.assign({}, it, { canEdit: u.isMgr || it.by === ME }); }
+  // ----- Giao việc (dữ liệu mẫu) -----
+  let tseq = 0;
+  const nameOf = e => { const u = db.users.find(x => x.email === e); return (u && u.name) || e; };
+  function addTask(off, type, status, desc, ppl, by, cust){
+    cust = cust || {};
+    db.tasks.push({ id: 't' + (++tseq), no: tseq, date: addDays(T, off), type: type, status: status, desc: desc, people: ppl,
+      company: cust.company || '', cname: cust.cname || '', contact: cust.contact || '', via: cust.via || '', by: by });
+  }
+  addTask(-3, 'Sửa chữa', 'Chưa xong', 'SG110CX A22B2801393 – thay AC Relay khi có linh kiện', [PPL[2]], ME);
+  addTask(-2, 'HTKT', 'Đang theo dõi', 'Theo dõi Plant Long An sau khi cập nhật firmware Logger1000', [PPL[0], PPL[1]], CHAU, { company: 'XB', via: 'Zalo', contact: 'Nhóm helpdesk A' });
+  addTask(-1, 'CSKH_TV', 'Chưa xong', 'Gọi lại khách hướng dẫn cài đặt chống phát ngược SG33CX-P2', [PPL[1]], ME, { company: 'Công ty TNHH Năng lượng Phú Thành', cname: 'Anh Lâm', via: 'Sim Hotline', contact: '0901223344' });
+  addTask(-1, 'Kiểm tra', 'Hoàn thành', 'Kiểm tra 3 inverter SG20RT đại lý INPOS gửi về', [PPL[2], PPL[0]], ME);
+  addTask(0, 'Gửi hàng', 'Chưa xong', 'Gửi trả inverter SG50CX cho Solar Miền Tây', [PPL[0]], CHAU, { company: 'Solar Miền Tây', cname: 'Chị Hạnh' });
+  addTask(0, 'Test', 'Chưa xong', 'Chạy tải 4 giờ SG125CX-P2 sau khi thay IGBT', [PPL[2]], ME);
+  // dòng báo cáo mẫu của việc được giao
+  db.items.push({ id: 'd' + (++seq), no: nextNo++, date: T, type: 'HTKT', status: 'Đang theo dõi', desc: db.tasks[1].desc, people: db.tasks[1].people.slice(),
+    company: 'XB', cname: '', contact: 'Nhóm helpdesk A', via: 'Zalo', by: ME, task: 't2' });
+  function tview(t){ const u = me(); const mine = !!u.name && t.people.indexOf(u.name) >= 0;
+    return Object.assign({}, t, { byName: nameOf(t.by), mine: mine, canEdit: u.isMgr, canStatus: u.isMgr || mine }); }
+  function syncReport(t){
+    const u = me(); let it = db.items.find(i => i.task === t.id && i.date === T);
+    const data = { type: t.type, status: t.status, desc: t.desc, people: t.people.slice(), company: t.company, cname: t.cname, contact: t.contact, via: t.via };
+    if (it) Object.assign(it, data); else { it = Object.assign({ id: 'd' + (++seq), no: nextNo++, date: T, by: ME, task: t.id }, data); db.items.push(it); }
+    return view(it);
+  }
   function err(m){ throw new Error(m); }
-  function apiInit(){ const u = me(); const o = { user: u, cats: db.cats, templates: db.templates }; if (u.isAdmin) o.users = db.users.map(x => ({ email: x.email, name: x.name, role: x.role })); return o; }
+  function apiInit(){ const u = me(); const o = { user: u, cats: db.cats, templates: db.templates, carried: carriedOnce }; carriedOnce = 0; if (u.isAdmin) o.users = db.users.map(x => ({ email: x.email, name: x.name, role: x.role })); return o; }
   return {
     setRole(r){ role = r; },
+    apiTasks(){ const u = me(); return db.tasks.map(tview).filter(t => u.isMgr || t.mine); },
+    apiTaskSave(x){
+      const u = me();
+      if (!x.status) err('Vui lòng chọn trạng thái.');
+      if (x.id) {
+        const t = db.tasks.find(i => i.id === x.id); if (!t) err('Không tìm thấy việc giao (có thể đã bị xoá).');
+        if (u.isMgr) {
+          if (!x.type) err('Vui lòng chọn loại việc.'); if (!x.desc) err('Vui lòng nhập mô tả công việc.'); if (!x.people || !x.people.length) err('Vui lòng chọn ít nhất 1 nhân sự.');
+          Object.assign(t, { type: x.type, status: x.status, desc: x.desc, people: x.people.slice(0, 3), company: x.company || '', cname: x.cname || '', contact: x.contact || '', via: x.via || '' });
+        } else {
+          if (t.people.indexOf(u.name) < 0) err('Bạn chỉ cập nhật được việc được giao cho mình.');
+          t.status = x.status;
+        }
+        return { task: tview(t), report: t.people.indexOf(u.name) >= 0 ? syncReport(t) : null };
+      }
+      if (!u.isMgr) err('Chỉ Admin và Quản lý mới giao việc được.');
+      if (!x.type) err('Vui lòng chọn loại việc.'); if (!x.desc) err('Vui lòng nhập mô tả công việc.'); if (!x.people || !x.people.length) err('Vui lòng chọn ít nhất 1 nhân sự.');
+      const t = { id: 't' + (++tseq), no: tseq, date: T, type: x.type, status: x.status, desc: x.desc, people: x.people.slice(0, 3),
+        company: x.company || '', cname: x.cname || '', contact: x.contact || '', via: x.via || '', by: ME };
+      db.tasks.push(t); return { task: tview(t), report: null };
+    },
+    apiTaskTransfer(id, ppl){
+      if (!me().isMgr) err('Chỉ Admin và Quản lý mới chuyển việc được.');
+      const t = db.tasks.find(i => i.id === id); if (!t) err('Không tìm thấy việc giao (có thể đã bị xoá).');
+      if (!ppl || !ppl.length) err('Chọn ít nhất 1 người nhận việc.');
+      t.people = ppl.slice(0, 3); return tview(t);
+    },
+    apiTaskDelete(id){
+      if (!me().isMgr) err('Chỉ Admin và Quản lý mới xoá việc giao được.');
+      const i = db.tasks.findIndex(x => x.id === id); if (i < 0) err('Không tìm thấy việc giao (có thể đã bị xoá).');
+      db.tasks.splice(i, 1); return true;
+    },
     apiInit: apiInit,
     apiSetMyName(n){ const u = db.users.find(x => x.email === ME); u.name = n; if (db.cats.people.indexOf(n) < 0) db.cats.people.push(n); return apiInit(); },
     apiList(f, t){ return db.items.filter(i => i.date >= f && i.date <= t).sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.no - b.no).map(view); },
@@ -2063,28 +2656,38 @@ const Demo = (function(){
       const data = { date: x.date, type: x.type, status: x.status, desc: x.desc, people: x.people.slice(0, 3), company: x.company || '', cname: x.cname || '', contact: x.contact || '', via: x.via || '' };
       if (x.id) {
         const it = db.items.find(i => i.id === x.id); if (!it) err('Không tìm thấy công việc (có thể đã bị xoá).');
-        if (!u.isAdmin && it.by !== ME) err('Bạn chỉ sửa được công việc do mình nhập.');
-        Object.assign(it, data); return view(it);
+        if (!u.isMgr && it.by !== ME) err('Bạn chỉ sửa được công việc do mình nhập.');
+        Object.assign(it, data); delete it.fresh;
+        const out = view(it);
+        if (it.task && !db.items.some(z => z.task === it.task && z.date > it.date)) {
+          const t = db.tasks.find(z => z.id === it.task); if (t && t.status !== it.status) { t.status = it.status; out.task = tview(t); }
+        }
+        if (stKey(it.status) === 'ok') {
+          out.removed = []; let q = [it.id];
+          while (q.length) { const src = q.shift(); db.items.filter(x => x.from === src && x.fresh).forEach(x => { out.removed.push(x.id); q.push(x.id); }); }
+          db.items = db.items.filter(x => out.removed.indexOf(x.id) < 0);
+        }
+        return out;
       }
       const it = Object.assign({ id: 'd' + (++seq), no: nextNo++, by: ME }, data); db.items.push(it); return view(it);
     },
     apiDelete(id){
       const i = db.items.findIndex(x => x.id === id); if (i < 0) err('Không tìm thấy công việc (có thể đã bị xoá).');
-      if (!me().isAdmin && db.items[i].by !== ME) err('Bạn chỉ xoá được công việc do mình nhập.');
+      if (!me().isMgr && db.items[i].by !== ME) err('Bạn chỉ xoá được công việc do mình nhập.');
       db.items.splice(i, 1); return true;
     },
     apiSaveSettings(s){
-      if (!me().isAdmin) err('Chỉ Quản lý mới thực hiện được thao tác này.');
+      if (!me().isMgr) err('Chỉ Admin và Quản lý mới sửa được danh mục.');
       db.cats = { types: s.types.slice(), statuses: s.statuses.slice(), people: s.people.slice(), vias: (s.vias || []).slice() };
       db.templates = s.templates.map(t => ({ name: t.name, type: t.type, status: t.status, desc: t.desc }));
       return { cats: db.cats, templates: db.templates };
     },
     apiSaveUsers(list){
-      if (!me().isAdmin) err('Chỉ Quản lý mới thực hiện được thao tác này.');
+      if (!me().isAdmin) err('Chỉ Admin mới thực hiện được thao tác này.');
       const old = db.users.map(u => u.email), notes = [];
       const users = []; const seen = {};
-      list.forEach(x => { const e = x.email.toLowerCase(); if (seen[e]) return; seen[e] = 1; users.push({ email: e, name: x.name, role: x.role === ADMIN ? ADMIN : STAFF }); });
-      const self = users.find(x => x.email === ME); if (!self || self.role !== ADMIN) err('Không thể xoá hoặc bỏ quyền Quản lý của chính bạn.');
+      list.forEach(x => { const e = x.email.toLowerCase(); if (seen[e]) return; seen[e] = 1; users.push({ email: e, name: x.name, role: [ADMIN, MGR].indexOf(x.role) >= 0 ? x.role : STAFF }); });
+      const self = users.find(x => x.email === ME); if (!self || self.role !== ADMIN) err('Không thể xoá hoặc bỏ quyền Admin của chính bạn.');
       users.forEach(u => { if (old.indexOf(u.email) < 0) notes.push('Đã cấp quyền vào web cho ' + u.email); });
       old.forEach(e => { if (!seen[e]) notes.push('Đã thu hồi quyền vào web của ' + e); });
       db.users = users; return { users: users, notes: notes };
@@ -2095,16 +2698,19 @@ $('#demoDenied').onclick = () => {
   if (!$('#gate').hidden && !$('#gDenied').hidden) { showGate('ok'); $('#demoDenied').textContent = 'Xem màn hình chưa cấp quyền'; return; }
   showGate('denied', 'nhanvien.moi@gmail.com'); $('#demoDenied').textContent = 'Quay lại màn hình chào';
 };
-$('#demoRole').onclick = async () => {
-  const nowAdmin = S.user && S.user.isAdmin;
-  Demo.setRole(nowAdmin ? 'Nhân viên' : 'Quản lý');
-  $('#demoRole').textContent = nowAdmin ? 'Xem như Quản lý' : 'Xem như Nhân viên';
+$('#demoRoles').addEventListener('click', async e => {
+  const b = e.target.closest('[data-demo-role]'); if (!b) return;
+  const r = b.dataset.demoRole;
+  Demo.setRole(r);
+  $$('#demoRoles button').forEach(x => x.classList.toggle('on', x === b));
   try {
     applyInit(await api('apiInit'));
     loadDay(); if (loaded.list) loadList();
-    toast(nowAdmin ? 'Đang xem như Nhân viên: chỉ sửa được việc do mình nhập, không có Cài đặt.' : 'Đang xem như Quản lý.');
-  } catch(e){ fail(e); }
-};
+    toast(r === 'Admin' ? 'Đang xem như Admin: toàn quyền, có Cài đặt.'
+      : r === 'Quản lý' ? 'Đang xem như Quản lý: giao/chuyển việc, sửa Danh mục và Mẫu đề xuất nhanh; không quản lý người dùng.'
+      : 'Đang xem như Nhân viên: chỉ thấy việc giao cho mình và đổi trạng thái.');
+  } catch(err){ fail(err); }
+});
 
 boot();
 })();
