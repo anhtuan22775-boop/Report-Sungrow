@@ -1192,6 +1192,7 @@ async function loadDay(){
     const r = await api('apiList', S.day, S.day);
     if (my !== dayReq) return;
     S.dayItems = r; renderDay();
+    if (!S.tasksReady) loadTasks();
   } catch(e){ if (my === dayReq) { $('#dayList').innerHTML = '<div class="empty">Không tải được danh sách.</div>'; fail(e); } }
 }
 function renderDay(){
@@ -1199,26 +1200,31 @@ function renderDay(){
   S.dayItems = all;
   const per = $('#dPerson').value, stf = $('#dStatus').value;
   const items = all.filter(i => (!per || i.people.indexOf(per) >= 0) && (!stf || i.status === stf));
+  // Việc được giao còn mở trong ngày nhưng chưa có dòng báo cáo -> vẫn tính vào thống kê
+  const tAll = dayTasks(all), tItems = tAll.filter(t => (!per || t.people.indexOf(per) >= 0) && (!stf || t.dst === stf));
   // Tổng quan ngày
-  const by = {}; all.forEach(i => { by[i.status] = (by[i.status] || 0) + 1; });
+  const by = {}; all.concat(tAll).forEach(i => { const st = i.dst || i.status; by[st] = (by[st] || 0) + 1; });
   const names = S.cats.statuses.slice(); Object.keys(by).forEach(x => { if (names.indexOf(x) < 0) names.push(x); });
-  const n = all.length;
+  const n = all.length + tAll.length, nAs = tAll.length + all.filter(i => i.task).length;
   $('#dayCount').textContent = fmtDay(S.day);
-  $('#dayStats').innerHTML = '<div class="kpi"><span class="k-t">Tổng số công việc</span><span class="k-n">' + n + '</span><span class="bar"><i style="width:100%"></i></span></div>' +
+  $('#dayStats').innerHTML = '<div class="kpi"><span class="k-t">Tổng số công việc</span><span class="k-n">' + n + '</span>' +
+    (nAs ? '<span class="k-s"><span>Gồm việc được giao</span><b>' + nAs + '</b></span>' : '') + '<span class="bar"><i style="width:100%"></i></span></div>' +
     names.map(x => { const c = by[x] || 0, pct = n ? Math.round(c * 100 / n) : 0;
       return '<button type="button" class="kpi' + (stf === x ? ' on' : '') + '" data-dst="' + esc(x) + '" style="--c:' + ST_HEX[stKey(x)] + '" aria-pressed="' + (stf === x) + '">' +
         '<span class="k-t">' + esc(x) + '</span><span class="k-n">' + c + '</span><span class="k-s"><span>' + (stf === x ? 'Đang lọc · bấm để bỏ' : 'Bấm để lọc') + '</span><b>' + pct + '%</b></span>' +
         '<span class="bar"><i style="width:' + pct + '%"></i></span></button>'; }).join('');
   const pc = {};
-  all.forEach(i => i.people.forEach(p => { const o = pc[p] = pc[p] || { n: 0, ok: 0 }; o.n++; if (stKey(i.status) === 'ok') o.ok++; }));
+  all.concat(tAll).forEach(i => i.people.forEach(p => { const o = pc[p] = pc[p] || { n: 0, ok: 0 }; o.n++; if (stKey(i.dst || i.status) === 'ok') o.ok++; }));
   const pk = Object.keys(pc).sort((a, b) => pc[b].n - pc[a].n);
   $('#dayPeople').innerHTML = pk.length ? '<div class="sec-title">Theo nhân sự</div>' + pk.map(p =>
     '<div class="ps"><span class="av" style="--a:' + avColor(p) + '">' + esc(initial(p)) + '</span><b>' + esc(p) + '</b><span>' + pc[p].n + ' việc · ' + pc[p].ok + ' xong</span></div>').join('') : '';
-  $('#dayRange').textContent = n ? (items.length === n ? n + ' việc' : items.length + ' / ' + n + ' việc (đang lọc)') : '';
+  const shown = items.length + tItems.length;
+  $('#dayRange').textContent = n ? (shown === n ? n + ' việc' : shown + ' / ' + n + ' việc (đang lọc)') : '';
   // Bảng chi tiết
+  const tBlock = '';   // không liệt kê riêng việc giao chưa cập nhật (vẫn tính trong thống kê)
   if (!n) { $('#dayList').innerHTML = '<div class="empty">Chưa có việc nào trong ngày ' + dmy(S.day) + '.<br>Bấm một mẫu việc hoặc điền form để thêm.</div>'; return; }
-  if (!items.length) { $('#dayList').innerHTML = '<div class="empty">Không có việc nào khớp bộ lọc.</div>'; return; }
-  if (!wideMQ.matches) { $('#dayList').innerHTML = items.map((it, i) => jobCard(it, i)).join(''); return; }
+  if (!items.length) { $('#dayList').innerHTML = all.length ? '<div class="empty">Không có việc nào khớp bộ lọc.</div>' : '<div class="empty">Chưa có báo cáo nào trong ngày ' + dmy(S.day) + '.</div>'; return; }
+  if (!wideMQ.matches) { $('#dayList').innerHTML = items.map((it, i) => jobCard(it, i)).join('') + tBlock; return; }
   const cell = (v, cls) => v ? '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(v) + '</td>' : '<td class="dash">-</td>';
   $('#dayList').innerHTML = '<div class="tbl-wrap"><table class="xt"><thead><tr>' +
     ['No','Time','Type','Status','Describe','Personnel 1','Personnel 2','Personnel 3','Công ty','Tên người liên hệ','Ghi chú'].map(h => '<th>' + h + '</th>').join('') +
@@ -1229,7 +1235,15 @@ function renderDay(){
       '<td class="x-st" style="--c:' + ST_HEX[stKey(it.status)] + '">' + (it.canEdit ? '<button type="button" data-stq="' + esc(it.id) + '" title="Bấm để đổi trạng thái">' + esc(it.status) + '</button>' : esc(it.status)) + '</td>' +
       '<td class="x-desc">' + esc(it.desc) + (it.since || it.task ? '<span class="carry-l">' + carryTag(it) + ' ' + assnTag(it) + '</span>' : '') + '</td>' + cell(it.people[0], 'x-p') + cell(it.people[1], 'x-p') + cell(it.people[2], 'x-p') +
       cell(it.company, 'x-co') + cell(it.cname, 'x-cn') + cell(noteText(it), 'x-ct') + '</tr>').join('') +
-    '</tbody></table></div>';
+    '</tbody></table></div>' + tBlock;
+}
+// Việc giao đang mở vào ngày S.day (đã giao trước/trong ngày, chưa xong hoặc xong trong/sau ngày đó) và chưa có dòng báo cáo ngày đó
+function dayTasks(all){
+  if (!S.tasksReady) return [];
+  const has = {}; all.forEach(i => { if (i.task) has[i.task] = 1; });
+  return S.tasks.filter(t => !has[t.id] && t.date && t.date <= S.day && (stKey(t.status) !== 'ok' || (t.updated || t.date) >= S.day))
+    .map(t => Object.assign({}, t, { dst: stKey(t.status) === 'ok' && (t.updated || t.date) > S.day ? defTaskStatus() : t.status }))
+    .sort((a, b) => a.no - b.no);
 }
 $('#dayStats').addEventListener('click', e => {
   const b = e.target.closest('[data-dst]'); if (!b) return;
@@ -2182,6 +2196,7 @@ function fillSel(sel, list, first){
 }
 function renderTasks(){
   if (!S.tasksReady || !S.user) return;
+  if (S.dayItems) renderDay();
   closeStMenu();
   fillSel($('#kMyStatus'), S.cats.statuses, 'Tất cả trạng thái');
   fillSel($('#kStatus'), S.cats.statuses, 'Tất cả trạng thái');
@@ -2298,7 +2313,18 @@ $('#kDel').onclick = async () => {
   if (!b.classList.contains('armed')) { b.classList.add('armed'); b.textContent = 'Bấm lần nữa để xoá'; kDelT = setTimeout(disarmKDel, 3500); return; }
   disarmKDel(); b.disabled = true;
   const id = tEditing.id;
-  try { await api('apiTaskDelete', id); removeFrom(S.tasks, id); closeTask(); renderTasks(); toast('Đã xoá việc giao.'); }
+  try {
+    const r = await api('apiTaskDelete', id);
+    removeFrom(S.tasks, id);
+    // xoá luôn các dòng báo cáo của việc giao này khỏi Nhập báo cáo / Danh sách
+    const gone = {}; ((r && r.removed) || []).forEach(x => { gone[x] = 1; });
+    const keep = x => !(x.task === id || gone[x.id]);
+    const rmIds = {}; S.dayItems.concat(S.listItems).forEach(x => { if (!keep(x)) rmIds[x.id] = 1; });
+    const nRm = Math.max(Object.keys(rmIds).length, Object.keys(gone).length);
+    S.dayItems = S.dayItems.filter(keep); S.listItems = S.listItems.filter(keep);
+    closeTask(); renderTasks(); renderDay(); renderList();
+    toast('Đã xoá việc giao khỏi danh sách công việc');
+  }
   catch(err){ fail(err); }
   finally { b.disabled = false; }
 };
@@ -2754,6 +2780,7 @@ const Demo = (function(){
       if (!x.status) err('Vui lòng chọn trạng thái.');
       if (x.id) {
         const t = db.tasks.find(i => i.id === x.id); if (!t) err('Không tìm thấy việc giao (có thể đã bị xoá).');
+        const stChanged = t.status !== x.status;
         if (u.isMgr) {
           if (!x.type) err('Vui lòng chọn loại việc.'); if (!x.desc) err('Vui lòng nhập mô tả công việc.'); if (!x.people || !x.people.length) err('Vui lòng chọn ít nhất 1 nhân sự.');
           Object.assign(t, { type: x.type, status: x.status, desc: x.desc, people: x.people.slice(0, 3), company: x.company || '', cname: x.cname || '', contact: x.contact || '', via: x.via || '' });
@@ -2761,7 +2788,7 @@ const Demo = (function(){
           if (t.people.indexOf(u.name) < 0) err('Bạn chỉ cập nhật được việc được giao cho mình.');
           t.status = x.status;
         }
-        return { task: tview(t), report: t.people.indexOf(u.name) >= 0 ? syncReport(t) : null };
+        return { task: tview(t), report: (t.people.indexOf(u.name) >= 0 || (u.isMgr && stChanged)) ? syncReport(t) : null };
       }
       if (!u.isMgr) err('Chỉ Admin và Quản lý mới giao việc được.');
       if (!x.type) err('Vui lòng chọn loại việc.'); if (!x.desc) err('Vui lòng nhập mô tả công việc.'); if (!x.people || !x.people.length) err('Vui lòng chọn ít nhất 1 nhân sự.');
@@ -2778,7 +2805,9 @@ const Demo = (function(){
     apiTaskDelete(id){
       if (!me().isMgr) err('Chỉ Admin và Quản lý mới xoá việc giao được.');
       const i = db.tasks.findIndex(x => x.id === id); if (i < 0) err('Không tìm thấy việc giao (có thể đã bị xoá).');
-      db.tasks.splice(i, 1); return true;
+      db.tasks.splice(i, 1);
+      const removed = db.items.filter(x => x.task === id).map(x => x.id);
+      db.items = db.items.filter(x => x.task !== id); return { ok: true, removed: removed };
     },
     apiInit: apiInit,
     apiSetMyName(n){ const u = db.users.find(x => x.email === ME); u.name = n; if (db.cats.people.indexOf(n) < 0) db.cats.people.push(n); return apiInit(); },
