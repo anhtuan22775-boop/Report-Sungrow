@@ -1304,7 +1304,7 @@ $('#fNew').addEventListener('submit', async e => {
     NF.clearText(); NF.st.people = []; NF.paint();
     $$('#tplRow .tpl').forEach(t => t.classList.remove('on'));
     $('#nDesc').focus();
-    toast('Đã lưu việc #' + r.no + '.');
+    toast('Đã tạo thành công');
   } catch(err){ fail(err); }
   finally { btn.disabled = false; btn.textContent = 'Lưu việc'; }
 });
@@ -1354,7 +1354,7 @@ $('#eDel').onclick = async () => {
   try {
     await api('apiDelete', id);
     removeFrom(S.dayItems, id); removeFrom(S.listItems, id);
-    renderDay(); renderList(); closeModal(); toast('Đã xoá công việc.');
+    renderDay(); renderList(); closeModal(); toast('Đã xoá thành công');
   } catch(err){ fail(err); }
   finally { b.disabled = false; }
 };
@@ -1925,7 +1925,7 @@ $('#xFile').onclick = async () => {
     const url = URL.createObjectURL(blob);
     download({ url: url, name: name });
     setTimeout(() => URL.revokeObjectURL(url), 60000);
-    toast('Đã xuất file ' + name + ' (' + x.items.length + ' việc).');
+    toast('Đã xuất file thành công');
   } catch(err){ fail(err); }
   finally { btn.disabled = false; btn.textContent = 'Xuất file'; }
 };
@@ -2123,7 +2123,7 @@ $('#xOut').addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.dl != null) download(shots[+b.dataset.dl]);
   if (b.dataset.copy != null) {
-    try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': shots[+b.dataset.copy].blob })]); toast('Đã sao chép ảnh. Dán (Ctrl+V) vào nhóm chat là xong.'); }
+    try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': shots[+b.dataset.copy].blob })]); toast('Đã sao chép thành công'); }
     catch(err){ toast('Trình duyệt không cho sao chép ảnh ở đây. Hãy bấm Tải ảnh.', { err: true }); }
   }
   if (b.dataset.share != null) shareFiles([shots[+b.dataset.share].file]);
@@ -2307,7 +2307,7 @@ $('#kSave').onclick = async () => {
   try {
     const r = await api('apiTaskSave', d);
     closeTask();
-    afterTaskSave(r, isNew ? 'Đã giao việc #G' + r.task.no + ' cho ' + r.task.people.join(', ') + '.' : 'Đã lưu việc #G' + r.task.no + '.');
+    afterTaskSave(r, isNew ? 'Đã giao việc cho ' + r.task.people.join(', ') : 'Đã lưu việc #G' + r.task.no + '.');
   } catch(err){ fail(err); }
   finally { b.disabled = false; }
 };
