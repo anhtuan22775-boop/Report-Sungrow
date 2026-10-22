@@ -394,11 +394,12 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
 .gn-btn{display:inline-flex;align-items:center;gap:3px;border:0;background:none;padding:6px 2px;color:var(--ink-2);cursor:pointer}
 .gn-btn svg.globe{width:19px;height:19px;transition:color .2s}
 .gn-btn .caret{width:0;height:0;border:4px solid transparent;border-top:5px solid currentColor;border-bottom:0;margin-left:3px;transition:transform .2s}
-.gn-portal:hover .gn-btn,.gn-portal.open .gn-btn,.gn-btn:focus-visible{color:var(--sun)}
-.gn-portal:hover .caret,.gn-portal.open .caret{transform:rotate(180deg)}
+.gn-btn:hover,.gn-portal.open .gn-btn,.gn-btn:focus-visible{color:var(--sun)}
+.gn-portal.open .caret{transform:rotate(180deg)}
+@media (hover:hover) and (pointer:fine){.gn-portal:not(.shut):hover .caret{transform:rotate(180deg)}.gn-portal:not(.shut):hover .gn-btn{color:var(--sun)}.gn-portal:not(.shut):hover .gn-menu{opacity:1;visibility:visible;transform:none;transition-delay:0s}}
 .gn-menu{position:absolute;right:-8px;top:100%;padding-top:12px;z-index:20;opacity:0;visibility:hidden;transform:translateY(-6px);
   transition:opacity .2s ease,transform .2s ease,visibility 0s linear .2s}
-.gn-portal:hover .gn-menu,.gn-portal.open .gn-menu,.gn-portal:focus-within .gn-menu{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.gn-portal.open .gn-menu{opacity:1;visibility:visible;transform:none;transition-delay:0s}
 .gn-card{min-width:270px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(31,35,41,.12);padding:14px 8px 8px;white-space:normal}
 .gn-card h4{margin:0 10px 6px;padding-bottom:8px;border-bottom:1px solid var(--line);font-size:14px;font-weight:600;color:var(--ink)}
 .gn-card a{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px;border-radius:8px;color:var(--ink-2);text-decoration:none;font-size:13.5px}
@@ -1003,6 +1004,7 @@ function JobForm(root, pfx){
   });
 }
 JobForm.prototype.el = function(n){ return $('#' + this.pfx + n); };
+JobForm.prototype.showStatus = function(on){ $('[data-k=status]', this.root).closest('.field').style.display = on ? '' : 'none'; };
 JobForm.prototype.paint = function(){
   const st = this.st, c = S.cats;
   const withExtra = (list, extra) => { const o = list.slice(); extra.forEach(x => { if (x && o.indexOf(x) < 0) o.push(x); }); return o; };
@@ -1077,11 +1079,11 @@ const NF = new JobForm($('#newForm'), 'n');
 const EF = new JobForm($('#editForm'), 'e');
 
 /* ---------- Thẻ công việc ---------- */
-function jobCard(it){
+function jobCard(it, idx){
   const k = stKey(it.status);
   const cust = [it.company, it.cname, noteText(it)].filter(Boolean).join(' · ');
   return '<div class="job" role="button" tabindex="0" data-id="' + esc(it.id) + '">' +
-    '<span class="no num">#' + esc(it.no || '–') + '</span>' +
+    '<span class="no num">' + (typeof idx === 'number' ? idx + 1 : '#' + esc(it.no || '–')) + '</span>' +
     '<span style="min-width:0;display:block">' +
       '<span class="job-top"><span class="tag">' + esc(it.type) + '</span>' + stPill(it) + carryTag(it) + assnTag(it) +
         (it.canEdit ? '' : '<span class="lock">Chỉ xem</span>') + '</span>' +
@@ -1216,7 +1218,7 @@ function renderDay(){
   // Bảng chi tiết
   if (!n) { $('#dayList').innerHTML = '<div class="empty">Chưa có việc nào trong ngày ' + dmy(S.day) + '.<br>Bấm một mẫu việc hoặc điền form để thêm.</div>'; return; }
   if (!items.length) { $('#dayList').innerHTML = '<div class="empty">Không có việc nào khớp bộ lọc.</div>'; return; }
-  if (!wideMQ.matches) { $('#dayList').innerHTML = items.map(jobCard).join(''); return; }
+  if (!wideMQ.matches) { $('#dayList').innerHTML = items.map((it, i) => jobCard(it, i)).join(''); return; }
   const cell = (v, cls) => v ? '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(v) + '</td>' : '<td class="dash">-</td>';
   $('#dayList').innerHTML = '<div class="tbl-wrap"><table class="xt"><thead><tr>' +
     ['No','Time','Type','Status','Describe','Personnel 1','Personnel 2','Personnel 3','Công ty','Tên người liên hệ','Ghi chú'].map(h => '<th>' + h + '</th>').join('') +
@@ -1416,11 +1418,11 @@ function tableHTML(items){
     return '<th class="' + (on ? 'sorted' : '') + '" aria-sort="' + (on ? (S.sort.dir > 0 ? 'ascending' : 'descending') : 'none') + '"><button type="button" data-sort="' + c[0] + '">' +
       c[1] + '<span class="ar">' + (on ? (S.sort.dir > 0 ? '▲' : '▼') : '⇅') + '</span></button></th>';
   }).join('');
-  const rows = items.map(it => {
+  const rows = items.map((it, ri) => {
     const cust = [it.company, it.cname].filter(Boolean).join(' · ') || noteText(it);
     const custFull = [it.company, it.cname, noteText(it)].filter(Boolean).join(' · ');
     return '<tr data-id="' + esc(it.id) + '">' +
-      '<td class="c-no">#' + esc(it.no) + '</td>' +
+      '<td class="c-no" title="Mã việc #' + esc(it.no) + '">' + (ri + 1) + '</td>' +
       '<td class="c-date">' + dmy(it.date) + '<small>' + wd(it.date) + '</small></td>' +
       '<td><span class="tag">' + esc(it.type) + '</span></td>' +
       '<td class="c-desc"><span class="clamp" title="' + esc(it.desc) + '">' + esc(it.desc) + '</span>' + (it.since || it.task ? '<span class="carry-l">' + carryTag(it) + ' ' + assnTag(it) + '</span>' : '') + '</td>' +
@@ -1441,9 +1443,10 @@ function renderList(){
   if (wideMQ.matches) { $('#lList').innerHTML = tableHTML(sortItems(items)); return; }
   const groups = {};
   items.forEach(i => { (groups[i.date] = groups[i.date] || []).push(i); });
+  let seq = 0;
   $('#lList').innerHTML = Object.keys(groups).sort().reverse().map(d =>
     '<div class="day-group"><div class="day-h"><span>' + fmtDay(d) + '</span><small>' + groups[d].length + ' việc</small></div>' +
-    groups[d].sort((a, b) => a.no - b.no).map(jobCard).join('') + '</div>').join('');
+    groups[d].sort((a, b) => a.no - b.no).map(it => jobCard(it, seq++)).join('') + '</div>').join('');
 }
 $('#lList').addEventListener('click', e => {
   const b = e.target.closest('[data-sort]'); if (!b) return;
@@ -2253,7 +2256,8 @@ function openTask(t){
   $('#kTplWrap').hidden = !(isNew && S.templates.length);
   $('#kTplRow').innerHTML = S.templates.map((x, i) => '<button type="button" class="tpl" data-ktpl="' + i + '" title="' + esc(x.desc) + '">' +
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>' + esc(x.name) + '</button>').join('');
-  if (isNew) TF.set({ type: '', status: S.cats.statuses[0] || '', people: [] }); else TF.set(t);
+  if (isNew) TF.set({ type: '', status: defTaskStatus(), people: [] }); else TF.set(t);
+  TF.showStatus(!isNew);   // giao việc mới: không cần chọn trạng thái, người nhận / quản lý cập nhật sau
   TF.setRO(!isNew && !mgr, true);
   $('#kMeta').textContent = t ? 'Giao bởi ' + t.byName + ' ngày ' + dmy(t.date) + '.' + (mgr ? '' : ' Bạn chỉ đổi được trạng thái.') : '';
   $('#kDel').hidden = isNew || !mgr; $('#kMove').hidden = isNew || !mgr;
@@ -2262,6 +2266,7 @@ function openTask(t){
   disarmKDel();
   $('#taskModal').hidden = false;
 }
+function defTaskStatus(){ return S.cats.statuses.find(x => stKey(x) === 'bad') || S.cats.statuses.find(x => stKey(x) !== 'ok') || S.cats.statuses[0] || 'Chưa xong'; }
 function closeTask(){ $('#taskModal').hidden = true; tEditing = null; disarmKDel(); }
 function disarmKDel(){ clearTimeout(kDelT); const b = $('#kDel'); b.classList.remove('armed'); b.textContent = 'Xoá'; }
 $('#kNew').onclick = () => openTask(null);
@@ -2277,6 +2282,7 @@ $('#kTplRow').addEventListener('click', e => {
 $('#kSave').onclick = async () => {
   const d = TF.get(), isNew = !tEditing;
   if (tEditing) d.id = tEditing.id;
+  if (isNew) d.status = d.status || defTaskStatus();
   if (isNew || S.user.isMgr) { d.date = todayISO(); const bad = checkItem(d); if (bad) { toast(bad); return; } }
   const b = $('#kSave'); b.disabled = true;
   try {
@@ -2593,12 +2599,21 @@ document.addEventListener('pointerdown', e => {
   b.appendChild(sp); setTimeout(() => sp.remove(), 600);
   if (e.pointerType === 'touch' && navigator.vibrate && b.matches('.btn.primary, .btn.dark, .btn.danger')) { try { navigator.vibrate(8); } catch (x) {} }
 }, { passive: true });
-function closePortals(except){ $$('.gn-portal').forEach(p => { if (p !== except) { p.classList.remove('open'); $('.gn-btn', p).setAttribute('aria-expanded', 'false'); } }); }
-$$('.gn-btn').forEach(b => b.addEventListener('click', e => {
-  e.stopPropagation(); const p = b.closest('.gn-portal'), on = !p.classList.contains('open');
-  closePortals(p); p.classList.toggle('open', on); b.setAttribute('aria-expanded', String(on));
-}));
-document.addEventListener('click', e => { if (!e.target.closest('.gn-portal')) closePortals(); });
+function closePortals(except){ $$('.gn-portal').forEach(p => { if (p !== except) { p.classList.remove('open', 'shut'); $('.gn-btn', p).setAttribute('aria-expanded', 'false'); } }); }
+let gnPtr = 'mouse'; const hoverMQ = matchMedia('(hover:hover) and (pointer:fine)');
+$$('.gn-btn').forEach(b => {
+  const p = b.closest('.gn-portal');
+  b.addEventListener('pointerdown', e => { gnPtr = e.pointerType || 'mouse'; });
+  p.addEventListener('mouseleave', () => { if (gnPtr === 'mouse') p.classList.remove('shut'); });
+  b.addEventListener('click', e => {
+    e.stopPropagation();
+    const shown = p.classList.contains('open');   // bấm 1: mở (giữ cố định) · bấm 2: thu gọn
+    closePortals(p);
+    p.classList.toggle('open', !shown); p.classList.toggle('shut', shown);
+    b.setAttribute('aria-expanded', String(!shown)); if (shown) b.blur();
+  });
+});
+document.addEventListener('click', e => { if (!e.target.closest('.gn-portal') || e.target.closest('.gn-card a')) closePortals(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePortals(); });
 $('#gPolicyBtn').onclick = () => { const p = $('#gPolicy'); p.hidden = !p.hidden; $('#gPolicyBtn').setAttribute('aria-expanded', String(!p.hidden)); };
 $('#gAcct').addEventListener('click', e => { e.preventDefault(); if (!LIVE) { toast('Bản dùng thử: khi chạy thật, bấm vào đây để đăng nhập tài khoản Google khác.'); return; } logout(); });
