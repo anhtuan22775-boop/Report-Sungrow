@@ -1145,7 +1145,7 @@ async function quickStatus(id, st){
   try {
     const r = await api('apiSave', d);
     afterSave(r);
-    toast('Việc #' + r.no + ' chuyển sang “' + r.status + '”.' + (r.removed && r.removed.length ? ' Đã bỏ ' + r.removed.length + ' việc tự chuyển ở các ngày sau.' : ''));
+    toast('Đã cập nhật trạng thái thành công');
   } catch(e){ fail(e); }
 }
 function statsHTML(items){
@@ -1280,7 +1280,7 @@ $('#tplRow').addEventListener('click', e => {
   const f = $('#fNew'); f.classList.remove('flash'); void f.offsetWidth; f.classList.add('flash');
   f.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   const d = $('#nDesc'); d.focus({ preventScroll: true }); d.setSelectionRange(d.value.length, d.value.length);
-  toast('Đã điền sẵn “' + t.name + '”. Kiểm tra lại rồi bấm Lưu việc.');
+  toast('Đã điền mẫu thành công');
 });
 
 function resetNewForm(){
@@ -1338,7 +1338,7 @@ $('#eSave').onclick = async () => {
   try {
     const r = await api('apiSave', d);
     afterSave(r);
-    closeModal(); toast('Đã lưu thay đổi.' + (r.removed && r.removed.length ? ' Đã bỏ ' + r.removed.length + ' việc tự chuyển ở các ngày sau.' : ''));
+    closeModal(); toast('Đã lưu thành công');
   } catch(err){ fail(err); }
   finally { b.disabled = false; }
 };
@@ -2122,7 +2122,7 @@ function download(s){
 }
 $('#xOut').addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.dl != null) download(shots[+b.dataset.dl]);
+  if (b.dataset.dl != null) { download(shots[+b.dataset.dl]); toast('Đã tải ảnh thành công'); }
   if (b.dataset.copy != null) {
     try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': shots[+b.dataset.copy].blob })]); toast('Đã sao chép thành công'); }
     catch(err){ toast('Trình duyệt không cho sao chép ảnh ở đây. Hãy bấm Tải ảnh.', { err: true }); }
@@ -2136,7 +2136,7 @@ async function shareFiles(files){
 $('#xShareAll').onclick = () => shareFiles(shots.map(s => s.file));
 $('#xAll').onclick = async () => {
   for (let i = 0; i < shots.length; i++) { download(shots[i]); await new Promise(r => setTimeout(r, 500)); }
-  if (shots.length > 1) toast('Đã tải ' + shots.length + ' ảnh. Nếu trình duyệt hỏi, hãy chọn Cho phép tải nhiều tệp.');
+  toast('Đã tải ảnh thành công');
 };
 
 /* =====================================================================
@@ -2255,16 +2255,16 @@ $('#kPeople').addEventListener('click', e => {
   const b = e.target.closest('[data-kkp]'); if (!b) return;
   const sel = $('#kPerson'); sel.value = sel.value === b.dataset.kkp ? '' : b.dataset.kkp; renderTasks();
 });
-function afterTaskSave(r, msg){
+function afterTaskSave(r, msg, plain){
   upsert(S.tasks, r.task);
   if (r.report) { upsert(S.dayItems, r.report); upsert(S.listItems, r.report); renderDay(); renderList(); }
   renderTasks();
-  toast(msg + (r.report ? ' Đã ghi vào báo cáo hôm nay.' : ''));
+  toast(msg);
 }
 async function taskQuickStatus(id, st){
   const t = findTask(id); if (!t || t.status === st) return;
   const d = Object.assign({}, t, { status: st, people: t.people.slice() });
-  try { const r = await api('apiTaskSave', d); afterTaskSave(r, 'Việc #G' + r.task.no + ' chuyển sang “' + r.task.status + '”.'); }
+  try { const r = await api('apiTaskSave', d); afterTaskSave(r, 'Đã cập nhật trạng thái thành công', true); }
   catch(e){ fail(e); }
 }
 // Cửa sổ giao / sửa việc
@@ -2308,7 +2308,7 @@ $('#kSave').onclick = async () => {
   try {
     const r = await api('apiTaskSave', d);
     closeTask();
-    afterTaskSave(r, isNew ? 'Đã giao việc cho ' + r.task.people.join(', ') : 'Đã lưu việc #G' + r.task.no + '.');
+    afterTaskSave(r, isNew ? 'Đã giao việc cho ' + r.task.people.join(', ') : 'Đã lưu thành công');
   } catch(err){ fail(err); }
   finally { b.disabled = false; }
 };
@@ -2328,7 +2328,7 @@ $('#kDel').onclick = async () => {
     const nRm = Math.max(Object.keys(rmIds).length, Object.keys(gone).length);
     S.dayItems = S.dayItems.filter(keep); S.listItems = S.listItems.filter(keep);
     closeTask(); renderTasks(); renderDay(); renderList();
-    toast('Đã xoá việc giao khỏi danh sách công việc');
+    toast('Đã xoá thành công');
   }
   catch(err){ fail(err); }
   finally { b.disabled = false; }
@@ -2363,7 +2363,7 @@ $('#mvOk').onclick = async () => {
   try {
     const t = await api('apiTaskTransfer', mvTask.id, mvPick.slice());
     upsert(S.tasks, t); closeMove(); renderTasks();
-    toast('Đã chuyển việc #G' + t.no + ' cho ' + t.people.join(', ') + '.');
+    toast('Đã chuyển việc cho ' + t.people.join(', '));
   } catch(err){ fail(err); }
   finally { b.disabled = false; }
 };
@@ -2457,7 +2457,7 @@ $('#saveSettings').onclick = async () => {
     S.cats = r.cats; S.templates = r.templates;
     D.types = r.cats.types.slice(); D.statuses = r.cats.statuses.slice(); D.people = r.cats.people.slice(); D.vias = (r.cats.vias || []).slice(); D.templates = clone(r.templates);
     dirtySet = false; renderSettings(); afterCatsChange();
-    toast('Đã lưu danh mục và mẫu việc.');
+    toast('Đã lưu thành công');
   } catch(err){ fail(err); }
   finally { b.disabled = false; }
 };
@@ -2473,7 +2473,7 @@ $('#saveUsers').onclick = async () => {
     const ul = $('#userNotes');
     ul.hidden = !(r.notes && r.notes.length);
     ul.innerHTML = (r.notes || []).map(n => '<li>' + esc(n) + '</li>').join('');
-    toast('Đã lưu danh sách người dùng.');
+    toast('Đã lưu thành công');
   } catch(err){ fail(err); }
   finally { b.disabled = false; }
 };
