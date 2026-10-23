@@ -995,9 +995,7 @@ function JobForm(root, pfx){
     if (this.ro && !(this.keepSt && k === 'status')) return;
     if (k === 'people') {
       const i = this.st.people.indexOf(v);
-      if (i >= 0) this.st.people.splice(i, 1);
-      else if (this.st.people.length < 3) this.st.people.push(v);
-      else { toast('Chỉ chọn tối đa 3 người.'); return; }
+      if (i >= 0) this.st.people.splice(i, 1); else this.st.people.push(v);   // không giới hạn số người
     } else if (k === 'via') this.st.via = this.st.via === v ? '' : v;
     else this.st[k] = v;
     this.paint();
@@ -1035,7 +1033,7 @@ JobForm.prototype.get = function(){
   };
 };
 JobForm.prototype.set = function(o){
-  this.st = { type: o.type || '', status: o.status || '', people: (o.people || []).slice(0, 3), via: o.via || '' };
+  this.st = { type: o.type || '', status: o.status || '', people: (o.people || []).slice(), via: o.via || '' };
   this.el('Desc').value = o.desc || '';
   this.el('Company').value = o.company || ''; this.el('Cname').value = o.cname || ''; this.el('Contact').value = o.contact || '';
   this.el('Cust').open = !!(o.company || o.cname || o.contact || o.via);
@@ -1230,13 +1228,13 @@ function renderDay(){
   if (!wideMQ.matches) { $('#dayList').innerHTML = items.map((it, i) => jobCard(it, i)).join('') + tBlock; return; }
   const cell = (v, cls) => v ? '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(v) + '</td>' : '<td class="dash">-</td>';
   $('#dayList').innerHTML = '<div class="tbl-wrap"><table class="xt"><thead><tr>' +
-    ['No','Time','Type','Status','Describe','Personnel 1','Personnel 2','Personnel 3','Công ty','Tên người liên hệ','Ghi chú'].map(h => '<th>' + h + '</th>').join('') +
+    ['No','Time','Type','Status','Describe','Personnel','Công ty','Tên người liên hệ','Ghi chú'].map(h => '<th>' + h + '</th>').join('') +
     '</tr></thead><tbody>' + items.map((it, i) => '<tr data-id="' + esc(it.id) + '" title="Việc #' + esc(it.no) + ' – bấm để ' + (it.canEdit ? 'sửa' : 'xem') + '">' +
       '<td class="x-no">' + (i + 1) + '</td>' +
       '<td class="x-date">' + dmy(it.date) + '</td>' +
       cell(it.type, 'x-type') +
       '<td class="x-st" style="--c:' + ST_HEX[stKey(it.status)] + '">' + (it.canEdit ? '<button type="button" data-stq="' + esc(it.id) + '" title="Bấm để đổi trạng thái">' + esc(it.status) + '</button>' : esc(it.status)) + '</td>' +
-      '<td class="x-desc">' + esc(it.desc) + (it.since || it.task ? '<span class="carry-l">' + carryTag(it) + ' ' + assnTag(it) + '</span>' : '') + '</td>' + cell(it.people[0], 'x-p') + cell(it.people[1], 'x-p') + cell(it.people[2], 'x-p') +
+      '<td class="x-desc">' + esc(it.desc) + (it.since || it.task ? '<span class="carry-l">' + carryTag(it) + ' ' + assnTag(it) + '</span>' : '') + '</td>' + cell(it.people.join(', '), 'x-p') +
       cell(it.company, 'x-co') + cell(it.cname, 'x-cn') + cell(noteText(it), 'x-ct') + '</tr>').join('') +
     '</tbody></table></div>' + tBlock;
 }
@@ -1743,7 +1741,7 @@ async function buildTableImages(items, o){
   let cols = [
     { k: 'no', h: 'No.', w: 60, al: 'c' }, { k: 'date', h: 'Time', w: 175, al: 'c' }, { k: 'type', h: 'Type', w: 150, al: 'c' },
     { k: 'status', h: 'Status', w: 175, al: 'c' }, { k: 'desc', h: 'Describe', w: 0, max: 6 },
-    { k: 'p1', h: 'Personnel 1', w: 165 }, { k: 'p2', h: 'Personnel 2', w: 165 }, { k: 'p3', h: 'Personnel 3', w: 165 }
+    { k: 'ppl', h: 'Personnel', w: 260, max: 8 }
   ];
   if (o.cust) cols = cols.concat([{ k: 'company', h: 'Company', w: 190, max: 4 }, { k: 'cname', h: 'Người liên hệ', w: 150, max: 3 }, { k: 'contact', h: 'Ghi chú', w: 280, max: 4 }]);
   const fixed = cols.reduce((a, c) => a + c.w, 0);
@@ -1752,7 +1750,7 @@ async function buildTableImages(items, o){
 
   // sắp xếp theo ngày rồi số
   items = items.slice().sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.no - b.no);
-  const val = (it, k, i) => k === 'no' ? String(i + 1) : k === 'date' ? dmy(it.date) : k === 'p1' ? it.people[0] : k === 'p2' ? it.people[1] : k === 'p3' ? it.people[2] : k === 'contact' ? noteText(it) : k === 'desc' ? descImg(it) : it[k];
+  const val = (it, k, i) => k === 'no' ? String(i + 1) : k === 'date' ? dmy(it.date) : k === 'ppl' ? it.people.join('\n') : k === 'contact' ? noteText(it) : k === 'desc' ? descImg(it) : it[k];
   const rows = items.map((it, i) => {
     const cells = cols.map(c => {
       const v = String(val(it, c.k, i) || '').trim();
@@ -2015,7 +2013,7 @@ function buildXlsx(items, o){
     '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
 
   // ---- cột ----
-  let cols = [['No.', 6], ['Time', 12], ['Type', 13], ['Status', 16], ['Describe', 50], ['Personnel 1', 20], ['Personnel 2', 20], ['Personnel 3', 20]];
+  let cols = [['No.', 6], ['Time', 12], ['Type', 13], ['Status', 16], ['Describe', 50], ['Personnel', 28]];
   if (o.cust) cols = cols.concat([['Company', 26], ['Người liên hệ', 18], ['Ghi chú', 36]]);
   const last = XL.colName(cols.length - 1);
   const rows = [], merges = [];
@@ -2058,7 +2056,7 @@ function buildXlsx(items, o){
     r++;
     const z = i % 2;
     const vals = [[i + 1, sCen[z], 'n'], [XL.serial(it.date), sDt[z], 'n'], [it.type, sCen[z]], [it.status, sStCell[stKey(it.status)]],
-      [descImg(it), sTxt[z]], [it.people[0] || '', sTxt[z]], [it.people[1] || '', sTxt[z]], [it.people[2] || '', sTxt[z]]];
+      [descImg(it), sTxt[z]], [it.people.join('\n'), sTxt[z]]];
     if (o.cust) vals.push([it.company, sTxt[z]], [it.cname, sTxt[z]], [noteText(it), sTxt[z]]);
     // ước lượng chiều cao dòng (tối thiểu 2 dòng chữ)
     let lines = 2;
@@ -2353,7 +2351,7 @@ $('#moveModal').addEventListener('click', e => { if (e.target.id === 'moveModal'
 $('#mvList').addEventListener('click', e => {
   const b = e.target.closest('[data-mv]'); if (!b) return;
   const v = b.dataset.mv, i = mvPick.indexOf(v);
-  if (i >= 0) mvPick.splice(i, 1); else if (mvPick.length < 3) mvPick.push(v); else { toast('Chỉ chọn tối đa 3 người.'); return; }
+  if (i >= 0) mvPick.splice(i, 1); else mvPick.push(v);
   paintMove();
 });
 $('#mvOk').onclick = async () => {
@@ -2788,7 +2786,7 @@ const Demo = (function(){
         const stChanged = t.status !== x.status;
         if (u.isMgr) {
           if (!x.type) err('Vui lòng chọn loại việc.'); if (!x.desc) err('Vui lòng nhập mô tả công việc.'); if (!x.people || !x.people.length) err('Vui lòng chọn ít nhất 1 nhân sự.');
-          Object.assign(t, { type: x.type, status: x.status, desc: x.desc, people: x.people.slice(0, 3), company: x.company || '', cname: x.cname || '', contact: x.contact || '', via: x.via || '' });
+          Object.assign(t, { type: x.type, status: x.status, desc: x.desc, people: x.people.slice(), company: x.company || '', cname: x.cname || '', contact: x.contact || '', via: x.via || '' });
         } else {
           if (t.people.indexOf(u.name) < 0) err('Bạn chỉ cập nhật được việc được giao cho mình.');
           t.status = x.status;
@@ -2797,7 +2795,7 @@ const Demo = (function(){
       }
       if (!u.isMgr) err('Chỉ Admin và Quản lý mới giao việc được.');
       if (!x.type) err('Vui lòng chọn loại việc.'); if (!x.desc) err('Vui lòng nhập mô tả công việc.'); if (!x.people || !x.people.length) err('Vui lòng chọn ít nhất 1 nhân sự.');
-      const t = { id: 't' + (++tseq), no: tseq, date: T, type: x.type, status: x.status, desc: x.desc, people: x.people.slice(0, 3),
+      const t = { id: 't' + (++tseq), no: tseq, date: T, type: x.type, status: x.status, desc: x.desc, people: x.people.slice(),
         company: x.company || '', cname: x.cname || '', contact: x.contact || '', via: x.via || '', by: ME };
       db.tasks.push(t); return { task: tview(t), report: null };
     },
@@ -2805,7 +2803,7 @@ const Demo = (function(){
       if (!me().isMgr) err('Chỉ Admin và Quản lý mới chuyển việc được.');
       const t = db.tasks.find(i => i.id === id); if (!t) err('Không tìm thấy việc giao (có thể đã bị xoá).');
       if (!ppl || !ppl.length) err('Chọn ít nhất 1 người nhận việc.');
-      t.people = ppl.slice(0, 3); return tview(t);
+      t.people = ppl.slice(); return tview(t);
     },
     apiTaskDelete(id){
       if (!me().isMgr) err('Chỉ Admin và Quản lý mới xoá việc giao được.');
@@ -2821,7 +2819,7 @@ const Demo = (function(){
       const u = me();
       if (!x.type) err('Vui lòng chọn loại việc.'); if (!x.status) err('Vui lòng chọn trạng thái.');
       if (!x.desc) err('Vui lòng nhập mô tả công việc.'); if (!x.people || !x.people.length) err('Vui lòng chọn ít nhất 1 nhân sự.');
-      const data = { date: x.date, type: x.type, status: x.status, desc: x.desc, people: x.people.slice(0, 3), company: x.company || '', cname: x.cname || '', contact: x.contact || '', via: x.via || '' };
+      const data = { date: x.date, type: x.type, status: x.status, desc: x.desc, people: x.people.slice(), company: x.company || '', cname: x.cname || '', contact: x.contact || '', via: x.via || '' };
       if (x.id) {
         const it = db.items.find(i => i.id === x.id); if (!it) err('Không tìm thấy công việc (có thể đã bị xoá).');
         if (!u.isMgr && it.by !== ME) err('Bạn chỉ sửa được công việc do mình nhập.');
