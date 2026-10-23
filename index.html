@@ -970,6 +970,13 @@ const S = {
   tasks: [], tasksReady: false
 };
 
+/* Viết hoa chữ cái đầu tiên: "sửa biến tần" -> "Sửa biến tần" */
+const capFirst = v => String(v || '').replace(/^(\s*)(\p{Ll})/u, (m, a, b) => a + b.toLocaleUpperCase('vi'));
+function capField(el){
+  const v = el.value, nv = capFirst(v); if (nv === v) return;
+  const a = el.selectionStart, b = el.selectionEnd; el.value = nv;
+  try { el.setSelectionRange(a, b); } catch(_){}
+}
 /* ---------- Form công việc (dùng chung cho Nhập việc và cửa sổ Sửa) ---------- */
 function JobForm(root, pfx){
   this.root = root; this.pfx = pfx; this.ro = false;
@@ -988,6 +995,9 @@ function JobForm(root, pfx){
         '<div class="f via"><span>Liên hệ qua</span><div class="choices" data-k="via"></div></div>' +
         '<label class="f wide">Ghi chú<textarea id="' + pfx + 'Contact" rows="2" placeholder="VD: 0834853797 – Inverter SG110CX báo lỗi 039"></textarea></label>' +
       '</div></details></div>';
+  // Tự viết hoa chữ cái đầu khi gõ (bỏ qua lúc bộ gõ đang ghép chữ, làm lại khi ghép xong / rời ô)
+  const capT = e => { if (e.target.matches('#' + pfx + 'Desc,#' + pfx + 'Company,#' + pfx + 'Cname,#' + pfx + 'Contact') && !e.isComposing) capField(e.target); };
+  root.addEventListener('input', capT); root.addEventListener('compositionend', capT); root.addEventListener('focusout', capT);
   root.addEventListener('click', e => {
     const b = e.target.closest('[data-v]');
     if (!b || !root.contains(b)) return;
@@ -1028,8 +1038,8 @@ JobForm.prototype.paint = function(){
 JobForm.prototype.get = function(){
   return {
     type: this.st.type, status: this.st.status, people: this.st.people.slice(),
-    desc: this.el('Desc').value.trim(), company: this.el('Company').value.trim(),
-    cname: this.el('Cname').value.trim(), contact: this.el('Contact').value.trim(), via: this.st.via
+    desc: capFirst(this.el('Desc').value.trim()), company: capFirst(this.el('Company').value.trim()),
+    cname: capFirst(this.el('Cname').value.trim()), contact: capFirst(this.el('Contact').value.trim()), via: this.st.via
   };
 };
 JobForm.prototype.set = function(o){
@@ -1063,9 +1073,13 @@ const assnTag = it => { if (!it.task) return ''; const f = assnFrom(it);
   return '<span class="assn" title="Dòng báo cáo của việc được giao' + (f ? ' ngày ' + dmy(f) : '') + '">Được giao' + (f ? ' · Từ ngày ' + dmy(f).slice(0, 5) : '') + '</span>'; };
 const descImg = it => it.desc + (it.since ? '\n(' + sinceTxt(it) + ')' : '');
 function afterSave(r){
+  // Máy chủ có thể trả về "task" là cả việc giao (khi trạng thái việc giao đổi theo) hoặc chỉ là mã việc giao.
+  // Dòng báo cáo luôn chỉ giữ mã; việc giao (nếu có) cập nhật vào danh sách Giao việc.
+  const tk = r.task && typeof r.task === 'object' ? r.task : null;
+  if (tk) r.task = tk.id;
   upsert(S.dayItems, r); upsert(S.listItems, r);
   (r.removed || []).forEach(id => { removeFrom(S.dayItems, id); removeFrom(S.listItems, id); });
-  if (r.task) { upsert(S.tasks, r.task); renderTasks(); }
+  if (tk) { upsert(S.tasks, tk); renderTasks(); }
   renderDay(); renderList();
 }
 function checkItem(d){
