@@ -1344,6 +1344,7 @@ $('#eSave').onclick = async () => {
 };
 $('#eDel').onclick = async () => {
   if (!editing) return;
+  if (editing.task) { toast('Việc được giao chỉ xóa ở Giao việc'); return; }   // dòng của việc giao: không xoá ở đây
   const b = $('#eDel');
   if (!b.classList.contains('armed')) {
     b.classList.add('armed'); b.textContent = 'Bấm lần nữa để xoá';
