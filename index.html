@@ -2199,7 +2199,7 @@ function taskTable(items, mgr, seq){   // seq = true: cột Số là số thứ 
       const cust = [t.company, t.cname].filter(Boolean).join(' · ') || noteText(t);
       const custFull = [t.company, t.cname, noteText(t)].filter(Boolean).join(' · ');
       return '<tr data-tid="' + esc(t.id) + '">' +
-        '<td class="c-no"' + (seq ? ' title="Mã việc #G' + esc(t.no) + '">' + (items.length - ti) : '>#G' + esc(t.no)) + '</td>' +
+        '<td class="c-no"' + (seq ? ' title="Mã việc #G' + esc(t.no) + '">' + (seq === 'asc' ? ti + 1 : items.length - ti) : '>#G' + esc(t.no)) + '</td>' +
         '<td class="c-date">' + dmy(t.date) + '<small title="Người giao: ' + esc(t.byName) + '">bởi ' + esc(shortName(t.byName)) + '</small></td>' +
         '<td><span class="tag">' + esc(t.type) + '</span></td>' +
         '<td class="c-desc"><span class="clamp" title="' + esc(t.desc) + '">' + esc(t.desc) + '</span></td>' +
@@ -2229,7 +2229,7 @@ function renderTasks(){
   $('#kMyCount').textContent = mineAll.length ? mineAll.length + ' việc · ' + open + ' chưa hoàn thành' : '';
   $('#kMyList').innerHTML = !mineAll.length ? '<div class="empty">Chưa có việc nào được giao cho bạn.</div>'
     : !mine.length ? '<div class="empty">Không có việc nào khớp bộ lọc.</div>'
-    : wideMQ.matches ? taskTable(mine, false) : mine.map(t => taskCard(t)).join('');
+    : wideMQ.matches ? taskTable(mine, false, 'asc') : mine.map((t, i) => taskCard(t, i + 1)).join('');
   // Quản lý giao việc
   const mgr = !!S.user.isMgr;
   $('#kMgr').hidden = !mgr;
@@ -2256,7 +2256,7 @@ function renderTasks(){
   $('#kCount').textContent = items.length + ' việc' + (items.length !== S.tasks.length ? ' (đã lọc từ ' + S.tasks.length + ')' : '');
   $('#kList').innerHTML = !S.tasks.length ? '<div class="empty">Chưa giao việc nào. Bấm “+ Giao việc” để bắt đầu.</div>'
     : !items.length ? '<div class="empty">Không có việc nào khớp bộ lọc.</div>'
-    : wideMQ.matches ? taskTable(items, true) : items.map(t => taskCard(t)).join('');
+    : wideMQ.matches ? taskTable(items, true, 'asc') : items.map((t, i) => taskCard(t, i + 1)).join('');
 }
 $('#kMyStatus').addEventListener('change', renderTasks);
 $('#kPerson').addEventListener('change', renderTasks);
