@@ -1211,7 +1211,7 @@ async function loadDay(){
   } catch(e){ if (my === dayReq) { $('#dayList').innerHTML = '<div class="empty">Không tải được danh sách.</div>'; fail(e); } }
 }
 function renderDay(){
-  const all = S.dayItems.filter(x => x.date === S.day).sort((a, b) => a.no - b.no);
+  const all = S.dayItems.filter(x => x.date === S.day).sort((a, b) => b.no - a.no);   // việc nhập sau cùng lên đầu
   S.dayItems = all;
   const per = $('#dPerson').value, stf = $('#dStatus').value;
   const items = all.filter(i => (!per || i.people.indexOf(per) >= 0) && (!stf || i.status === stf));
@@ -1236,15 +1236,19 @@ function renderDay(){
   const shown = items.length + tItems.length;
   $('#dayRange').textContent = n ? (shown === n ? n + ' việc' : shown + ' / ' + n + ' việc (đang lọc)') : '';
   // Bảng chi tiết
-  const tBlock = '';   // không liệt kê riêng việc giao chưa cập nhật (vẫn tính trong thống kê)
+  const tItemsD = tItems.slice().reverse();   // việc giao mới nhất lên đầu
+  // Bảng công việc được giao: việc giao còn mở trong ngày nhưng chưa có dòng báo cáo (đã tính trong thống kê ở trên)
+  const tBlock = tItems.length ? '<div class="sec-title" style="margin-top:16px">Bảng công việc được giao (' + tItems.length + ')</div>' +
+    (wideMQ.matches ? taskTable(tItemsD, false, true) : tItemsD.map((t, i) => taskCard(t, tItemsD.length - i)).join('')) : '';
   if (!n) { $('#dayList').innerHTML = '<div class="empty">Chưa có việc nào trong ngày ' + dmy(S.day) + '.<br>Bấm một mẫu việc hoặc điền form để thêm.</div>'; return; }
-  if (!items.length) { $('#dayList').innerHTML = all.length ? '<div class="empty">Không có việc nào khớp bộ lọc.</div>' : '<div class="empty">Chưa có báo cáo nào trong ngày ' + dmy(S.day) + '.</div>'; return; }
-  if (!wideMQ.matches) { $('#dayList').innerHTML = items.map((it, i) => jobCard(it, i)).join('') + tBlock; return; }
+  if (!shown) { $('#dayList').innerHTML = '<div class="empty">Không có việc nào khớp bộ lọc.</div>'; return; }
+  if (!items.length) { $('#dayList').innerHTML = tBlock; return; }
+  if (!wideMQ.matches) { $('#dayList').innerHTML = items.map((it, i) => jobCard(it, items.length - i - 1)).join('') + tBlock; return; }
   const cell = (v, cls) => v ? '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(v) + '</td>' : '<td class="dash">-</td>';
   $('#dayList').innerHTML = '<div class="tbl-wrap"><table class="xt"><thead><tr>' +
     ['No','Time','Type','Status','Describe','Personnel','Công ty','Tên người liên hệ','Ghi chú'].map(h => '<th>' + h + '</th>').join('') +
     '</tr></thead><tbody>' + items.map((it, i) => '<tr data-id="' + esc(it.id) + '" title="Việc #' + esc(it.no) + ' – bấm để ' + (it.canEdit ? 'sửa' : 'xem') + '">' +
-      '<td class="x-no">' + (i + 1) + '</td>' +
+      '<td class="x-no">' + (items.length - i) + '</td>' +
       '<td class="x-date">' + dmy(it.date) + '</td>' +
       cell(it.type, 'x-type') +
       '<td class="x-st" style="--c:' + ST_HEX[stKey(it.status)] + '">' + (it.canEdit ? '<button type="button" data-stq="' + esc(it.id) + '" title="Bấm để đổi trạng thái">' + esc(it.status) + '</button>' : esc(it.status)) + '</td>' +
@@ -2176,10 +2180,10 @@ function tStPill(t){
     ? '<button type="button" class="st st-q k-' + k + '" data-tsq="' + esc(t.id) + '" title="Bấm để đổi trạng thái">' + esc(t.status) + '</button>'
     : '<span class="st k-' + k + '">' + esc(t.status) + '</span>';
 }
-function taskCard(t){
+function taskCard(t, seq){   // seq: số thứ tự hiển thị (nếu có), không thì hiện mã #G
   const cust = [t.company, t.cname, noteText(t)].filter(Boolean).join(' · ');
   return '<div class="job" role="button" tabindex="0" data-tid="' + esc(t.id) + '">' +
-    '<span class="no num">#G' + esc(t.no) + '</span>' +
+    '<span class="no num">' + (seq ? seq : '#G' + esc(t.no)) + '</span>' +
     '<span style="min-width:0;display:block">' +
       '<span class="job-top"><span class="tag">' + esc(t.type) + '</span>' + tStPill(t) + '</span>' +
       '<span class="job-desc" style="display:block">' + esc(t.desc) + '</span>' +
@@ -2188,14 +2192,14 @@ function taskCard(t){
       (t.canEdit ? '<span class="job-act"><button type="button" class="mv" data-tmv="' + esc(t.id) + '">Chuyển việc</button></span>' : '') +
     '</span></div>';
 }
-function taskTable(items, mgr){
+function taskTable(items, mgr, seq){   // seq = true: cột Số là số thứ tự (dòng trên cùng số lớn nhất)
   const head = ['Số','Ngày giao','Loại việc','Mô tả công việc','Nhân sự','Khách hàng','Trạng thái'].concat(mgr ? [''] : []);
   return '<div class="tbl-wrap"><table class="jt tk"><thead><tr>' + head.map(h => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' +
-    items.map(t => {
+    items.map((t, ti) => {
       const cust = [t.company, t.cname].filter(Boolean).join(' · ') || noteText(t);
       const custFull = [t.company, t.cname, noteText(t)].filter(Boolean).join(' · ');
       return '<tr data-tid="' + esc(t.id) + '">' +
-        '<td class="c-no">#G' + esc(t.no) + '</td>' +
+        '<td class="c-no"' + (seq ? ' title="Mã việc #G' + esc(t.no) + '">' + (items.length - ti) : '>#G' + esc(t.no)) + '</td>' +
         '<td class="c-date">' + dmy(t.date) + '<small title="Người giao: ' + esc(t.byName) + '">bởi ' + esc(shortName(t.byName)) + '</small></td>' +
         '<td><span class="tag">' + esc(t.type) + '</span></td>' +
         '<td class="c-desc"><span class="clamp" title="' + esc(t.desc) + '">' + esc(t.desc) + '</span></td>' +
@@ -2225,7 +2229,7 @@ function renderTasks(){
   $('#kMyCount').textContent = mineAll.length ? mineAll.length + ' việc · ' + open + ' chưa hoàn thành' : '';
   $('#kMyList').innerHTML = !mineAll.length ? '<div class="empty">Chưa có việc nào được giao cho bạn.</div>'
     : !mine.length ? '<div class="empty">Không có việc nào khớp bộ lọc.</div>'
-    : wideMQ.matches ? taskTable(mine, false) : mine.map(taskCard).join('');
+    : wideMQ.matches ? taskTable(mine, false) : mine.map(t => taskCard(t)).join('');
   // Quản lý giao việc
   const mgr = !!S.user.isMgr;
   $('#kMgr').hidden = !mgr;
@@ -2252,7 +2256,7 @@ function renderTasks(){
   $('#kCount').textContent = items.length + ' việc' + (items.length !== S.tasks.length ? ' (đã lọc từ ' + S.tasks.length + ')' : '');
   $('#kList').innerHTML = !S.tasks.length ? '<div class="empty">Chưa giao việc nào. Bấm “+ Giao việc” để bắt đầu.</div>'
     : !items.length ? '<div class="empty">Không có việc nào khớp bộ lọc.</div>'
-    : wideMQ.matches ? taskTable(items, true) : items.map(taskCard).join('');
+    : wideMQ.matches ? taskTable(items, true) : items.map(t => taskCard(t)).join('');
 }
 $('#kMyStatus').addEventListener('change', renderTasks);
 $('#kPerson').addEventListener('change', renderTasks);
