@@ -1317,7 +1317,7 @@ function renderDay(){
   if (!wideMQ.matches) { $('#dayList').innerHTML = items.map((it, i) => jobCard(it, items.length - i - 1)).join('') + tBlock; return; }
   const cell = (v, cls) => v ? '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(v) + '</td>' : '<td class="dash">-</td>';
   $('#dayList').innerHTML = '<div class="tbl-wrap"><table class="xt"><thead><tr>' +
-    [['STT','c'],['Ngày','c'],['Loại việc'],['Trạng thái','c'],['Mô tả'],['Người thực hiện','c'],['Công ty','c'],['Tên người liên hệ'],['Ghi chú']]
+    [['STT','c'],['Ngày','c'],['Loại việc','c'],['Trạng thái','c'],['Mô tả','c'],['Người thực hiện','c'],['Công ty','c'],['Tên người liên hệ'],['Ghi chú']]
       .map(h => '<th' + (h[1] ? ' class="' + h[1] + '"' : '') + '>' + h[0] + '</th>').join('') +
     '</tr></thead><tbody>' + items.map((it, i) => '<tr data-id="' + esc(it.id) + '" title="Việc #' + esc(it.no) + ' – bấm để ' + (it.canEdit ? 'sửa' : 'xem') + '">' +
       '<td class="x-no">' + (items.length - i) + '</td>' +
@@ -2606,7 +2606,7 @@ function renderUserRows(){
       '<input type="text" id="uN' + i + '" data-u="' + i + '" data-f="name" value="' + esc(u.name) + '" list="peopleList" placeholder="Họ tên" aria-label="Họ tên">' +
       '<div class="role-wrap"><select id="uR' + i + '" data-u="' + i + '" data-f="role" aria-label="Vai trò"' + (self ? ' disabled' : '') + '>' +
         ['Nhân viên','Quản lý','Admin'].map(r => '<option' + (u.role === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select>' +
-        (self ? '<button type="button" class="handover" id="btnHandover"' + (owner ? ' title="Bàn giao quyền quản trị (tượng trưng)"' : ' disabled title="Chỉ chủ web mới dùng được nút này"') + '>Bàn giao</button>' : '') + '</div>' +
+        (self ? '<button type="button" class="handover" id="btnHandover"' + (owner ? ' title="Bàn giao quyền quản trị"' : ' disabled title="Chỉ chủ web mới dùng được nút này"') + '>Bàn giao</button>' : '') + '</div>' +
     '</div><button type="button" class="del-x" data-udel="' + i + '" aria-label="Xoá người dùng"' + (self ? ' disabled title="Không thể tự xoá mình"' : '') + '>×</button></div>';
   }).join('');
 }
