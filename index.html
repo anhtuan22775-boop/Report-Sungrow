@@ -86,6 +86,8 @@ main{max-width:1180px;margin:0 auto;padding-block:16px 104px;
 .lbl small{margin-left:4px}
 .f.via{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--ink-2);min-width:0;grid-column:1/-1}
 .f.via .chip{font-weight:500}
+div.f:not(.via){display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:600;color:var(--ink-2);min-width:0}
+#xPeople .chip{font-weight:500;min-height:34px;padding:5px 12px}
 label.f textarea{resize:vertical}
 label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--ink-2);min-width:0}
 input[type=text],input[type=email],input[type=date],input:not([type]),select,textarea{
@@ -335,6 +337,10 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
 .trow .cells{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr));min-width:0}
 .trow .cells .wide{grid-column:1/-1}
 .trow .cells input,.trow .cells select{min-height:40px;padding:8px 10px}
+.role-wrap{position:relative;min-width:0}.role-wrap select{width:100%}
+.handover{position:absolute;right:34px;top:50%;transform:translateY(-50%);height:28px;padding:0 12px;border-radius:7px;border:1px solid var(--sun);background:#FFF1E4;color:var(--sun);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+.handover:hover:not(:disabled){background:var(--sun);color:#fff}
+.handover:disabled{border-color:var(--line-2);background:var(--navy-soft);color:var(--muted);cursor:not-allowed;opacity:.75}
 @media (min-width:900px){
   .tpl-rows .trow .cells{grid-template-columns:1fr 1fr 1fr 2.2fr}.tpl-rows .trow .cells .wide{grid-column:auto}
   .user-rows .trow .cells{grid-template-columns:1.6fr 1.4fr 1fr}.user-rows .trow .cells .wide{grid-column:auto}
@@ -519,6 +525,21 @@ input,select,textarea{transition:border-color .16s ease,box-shadow .16s ease}
   .gate-step input[type=text]{min-height:38px;font-size:14px}
   .gate-note{font-size:12.5px}
 }
+/* Cỡ chữ nhãn + ô nhập đồng nhất với chữ trên thanh tab (14px).
+   Giữ nguyên: chữ trong bảng, ô Mô tả công việc, chữ gợi ý nhỏ. */
+.lbl,label.f,.f.via{font-size:14px}
+.date-pick b{font-size:14px}
+@media (min-width:900px){
+  input[type=text],input[type=email],input[type=date],input:not([type]),select,textarea{font-size:14px}
+  textarea[id$=Desc]{font-size:16px}
+}
+/* Thông báo việc mới được giao */
+.tabs button[data-tab=tasks]{position:relative}
+.tbadge{position:absolute;top:6px;right:calc(50% - 22px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;font-size:11px;font-weight:800;font-style:normal;line-height:18px;text-align:center;box-shadow:0 0 0 2px var(--card)}
+@media (min-width:900px){.tbadge{top:10px;right:2px}}
+.newtag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:6px;background:var(--bad);color:#fff;font-size:11px;font-weight:800;vertical-align:middle}
+.mailchk{display:flex;align-items:center;gap:8px;margin-top:14px;padding:10px 12px;border:1px dashed var(--line-2);border-radius:10px;font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer}
+.mailchk input{width:18px;height:18px;accent-color:var(--sun)}
 </style>
 </head>
 <body>
@@ -534,7 +555,7 @@ input,select,textarea{transition:border-color .16s ease,box-shadow .16s ease}
     </div>
     <nav class="tabs" id="tabs" hidden>
       <button type="button" data-tab="entry" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Nhập báo cáo</span></button>
-      <button type="button" data-tab="tasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="m9 13 2 2 4-4"/></svg><span>Giao việc</span></button>
+      <button type="button" data-tab="tasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="m9 13 2 2 4-4"/></svg><span>Giao việc</span><i class="tbadge" id="tkBadge" hidden></i></button>
       <button type="button" data-tab="list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span>Danh sách</span></button>
       <button type="button" data-tab="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg><span>Xuất báo cáo</span></button>
       <button type="button" data-tab="settings" id="tabSettings" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span>Cài đặt</span></button>
@@ -726,7 +747,7 @@ input,select,textarea{transition:border-color .16s ease,box-shadow .16s ease}
           <button type="button" data-q="today">Hôm nay</button><button type="button" data-q="yesterday">Hôm qua</button>
           <button type="button" data-q="7d">7 ngày</button><button type="button" data-q="month">Tháng này</button>
         </div>
-        <label class="f">Nhân sự<select id="xPerson"></select></label>
+        <div class="f"><span>Nhân sự <small class="hint" style="font-weight:400">Có thể chọn nhiều người</small></span><div class="choices" id="xPeople"></div></div>
         <label class="f">Kiểu ảnh<select id="xMode">
           <option value="table">Dạng xem trên máy tính</option>
           <option value="cards">Dạng thẻ xem trên điện thoại</option>
@@ -829,6 +850,7 @@ input,select,textarea{transition:border-color .16s ease,box-shadow .16s ease}
     <div class="sheet-b">
       <div class="field" id="kTplWrap" hidden><div class="lbl">Đề xuất nhanh</div><div class="tpl-row" id="kTplRow"></div></div>
       <div id="taskForm"></div>
+      <label class="mailchk" id="kMailWrap"><input type="checkbox" id="kMail"> Gửi email thông báo cho người nhận việc</label>
       <div class="sheet-meta" id="kMeta"></div>
     </div>
     <div class="sheet-f">
@@ -847,6 +869,7 @@ input,select,textarea{transition:border-color .16s ease,box-shadow .16s ease}
     <div class="sheet-h"><b id="mvTitle">Chuyển việc</b><button type="button" class="icon-btn" data-mclose aria-label="Đóng">×</button></div>
     <div class="sheet-b">
       <div class="field"><div class="lbl">Người nhận mới <small>Có thể chọn nhiều nhân sự</small></div><div class="choices" id="mvList"></div></div>
+      <label class="mailchk"><input type="checkbox" id="mvMail"> Gửi email thông báo cho người mới nhận việc</label>
     </div>
     <div class="sheet-f">
       <span class="sp"></span>
@@ -1136,7 +1159,7 @@ function openStMenu(btn){
   if (stFor === it.id && stTask === isTask && !stMenu.hidden) { closeStMenu(); return; }
   stFor = it.id; stTask = isTask;
   const list = S.cats.statuses.slice(); if (list.indexOf(it.status) < 0) list.push(it.status);
-  stMenu.innerHTML = '<div class="sm-h">Đổi trạng thái việc #' + (isTask ? 'G' : '') + esc(it.no) + '</div>' + list.map(s =>
+  stMenu.innerHTML = '<div class="sm-h">Đổi trạng thái công việc</div>' + list.map(s =>
     '<button type="button" role="menuitem" data-set="' + esc(s) + '" class="' + (s === it.status ? 'cur' : '') + '" style="--c:' + ST_HEX[stKey(s)] + '"><span class="dot"></span>' + esc(s) + '</button>').join('');
   stMenu.hidden = false;
   const r = btn.getBoundingClientRect(), w = stMenu.offsetWidth, h = stMenu.offsetHeight, vw = document.documentElement.clientWidth;
@@ -1416,8 +1439,23 @@ function fillPeopleSelect(sel, keep){
   sel.innerHTML = '<option value="">Tất cả nhân sự</option>' + S.cats.people.map(p => '<option>' + esc(p) + '</option>').join('');
   sel.value = S.cats.people.indexOf(v) >= 0 ? v : '';
 }
+/* Xuất báo cáo: chọn nhiều nhân sự (không chọn = tất cả) */
+let xPick = [];
+function renderXPeople(){
+  xPick = xPick.filter(p => S.cats.people.indexOf(p) >= 0);
+  const all = !xPick.length;
+  $('#xPeople').innerHTML = '<button type="button" class="chip' + (all ? ' on' : '') + '" data-xp="" aria-pressed="' + all + '">Tất cả</button>' +
+    S.cats.people.map(p => { const on = xPick.indexOf(p) >= 0;
+      return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-xp="' + esc(p) + '" aria-pressed="' + on + '">' + esc(p) + '</button>'; }).join('');
+}
+$('#xPeople').addEventListener('click', e => {
+  const b = e.target.closest('[data-xp]'); if (!b) return;
+  const v = b.dataset.xp;
+  if (!v) xPick = []; else { const i = xPick.indexOf(v); if (i >= 0) xPick.splice(i, 1); else xPick.push(v); }
+  renderXPeople();
+});
 function fillFilters(){
-  fillPeopleSelect($('#lPerson')); fillPeopleSelect($('#xPerson')); fillPeopleSelect($('#dPerson'));
+  fillPeopleSelect($('#lPerson')); renderXPeople(); fillPeopleSelect($('#dPerson'));
   const ds = $('#dStatus'), dv = ds.value;
   ds.innerHTML = '<option value="">Tất cả trạng thái</option>' + S.cats.statuses.map(x => '<option>' + esc(x) + '</option>').join('');
   ds.value = S.cats.statuses.indexOf(dv) >= 0 ? dv : '';
@@ -1934,9 +1972,9 @@ async function exportData(){
   let f = $('#xFrom').value, t = $('#xTo').value;
   if (!f || !t) { toast('Chọn khoảng ngày.'); return null; }
   if (f > t) { const x = f; f = t; t = x; $('#xFrom').value = f; $('#xTo').value = t; }
-  const person = $('#xPerson').value;
+  const pick = xPick.slice(), person = pick.join(', ');
   let items = await api('apiList', f, t);
-  if (person) items = items.filter(i => i.people.indexOf(person) >= 0);
+  if (pick.length) items = items.filter(i => i.people.some(p => pick.indexOf(p) >= 0));
   const opt = { from: f, to: t, person: person, title: $('#xTitle').value.trim(), cust: $('#xCust').checked };
   return { items: items, opt: opt, base: 'BaoCao_' + f.replace(/-/g, '') + (t !== f ? '-' + t.replace(/-/g, '') : '') };
 }
@@ -2197,13 +2235,48 @@ const TF = new JobForm($('#taskForm'), 'a');
 S.tk = { person: '', status: '' };
 function findTask(id){ return S.tasks.find(x => x.id === id); }
 let taskReq = 0;
+/* ---- Việc mới được giao: chấm đỏ trên tab + thông báo khi mở web (ghi nhớ "đã xem" trên từng máy) ---- */
+const seenKey = () => 'seenTasks:' + ((S.user && S.user.email) || '');
+const myOpen = () => S.tasks.filter(t => t.mine && stKey(t.status) !== 'ok');
+function isNewTask(t){ const s = store.get(seenKey(), null); return !!s && t.mine && stKey(t.status) !== 'ok' && s.indexOf(t.id) < 0; }
+function markSeen(ids){
+  const s = store.get(seenKey(), []) || []; let ch = false;
+  ids.forEach(id => { if (s.indexOf(id) < 0) { s.push(id); ch = true; } });
+  if (ch) { store.set(seenKey(), s.slice(-500)); updateTaskBadge(); if (S.tab === 'tasks') renderTasks(); }
+}
+let notified = [];
+function updateTaskBadge(){
+  if (!S.tasksReady || !S.user) return;
+  if (store.get(seenKey(), null) == null) store.set(seenKey(), myOpen().map(t => t.id));   // lần đầu: coi các việc cũ là đã xem
+  const fresh = S.tasks.filter(isNewTask), b = $('#tkBadge');
+  b.hidden = !fresh.length; b.textContent = fresh.length > 9 ? '9+' : fresh.length;
+  const unseen = fresh.filter(t => notified.indexOf(t.id) < 0);
+  if (unseen.length) {
+    unseen.forEach(t => notified.push(t.id));
+    const one = fresh.length === 1 ? fresh[0] : null;
+    toast(one ? (one.byName || 'Quản lý') + ' vừa giao cho bạn: ' + one.desc : 'Bạn có ' + fresh.length + ' việc mới được giao',
+      { ms: 8000, action: { label: 'Xem', fn: () => { goTab('tasks'); if (one) openTask(one); } } });
+  }
+}
+let taskPollAt = 0;
+function pollTasks(){ if (!S.user || document.hidden || Date.now() - taskPollAt < 60000) return; taskPollAt = Date.now(); loadTasks(); }
+setInterval(pollTasks, 120000);
+document.addEventListener('visibilitychange', pollTasks);
+function mailNote(m){
+  if (!m) return '';
+  let t = '';
+  if (m.sent && m.sent.length) t += ' · Đã gửi email cho ' + m.sent.join(', ');
+  if (m.missing && m.missing.length) t += ' · Chưa có email của ' + m.missing.join(', ') + ' (thêm trong Cài đặt → Người dùng)';
+  return t;
+}
+function mailErr(m){ if (m && m.error) setTimeout(() => toast('Chưa gửi được email: ' + m.error, { err: true, ms: 9000 }), 3300); }
 async function loadTasks(){
   const my = ++taskReq;
   if (!S.tasksReady) { $('#kMyList').innerHTML = '<div class="empty">Đang tải…</div>'; $('#kList').innerHTML = ''; }
   try {
     const r = await api('apiTasks');
     if (my !== taskReq) return;
-    S.tasks = r; S.tasksReady = true; renderTasks();
+    S.tasks = r; S.tasksReady = true; taskPollAt = Date.now(); renderTasks(); updateTaskBadge();
   } catch(e){ if (my === taskReq) { $('#kMyList').innerHTML = '<div class="empty">Không tải được danh sách việc giao.</div>'; fail(e); } }
 }
 const tOrder = t => stKey(t.status) === 'ok' ? 1 : 0;
@@ -2220,7 +2293,7 @@ function taskCard(t, seq){   // seq: số thứ tự hiển thị (nếu có), k
     '<span class="no num">' + (seq ? seq : '#G' + esc(t.no)) + '</span>' +
     '<span style="min-width:0;display:block">' +
       '<span class="job-top"><span class="tag">' + esc(t.type) + '</span>' + tStPill(t) + '</span>' +
-      '<span class="job-desc" style="display:block">' + esc(t.desc) + '</span>' +
+      '<span class="job-desc" style="display:block">' + esc(t.desc) + (isNewTask(t) ? '<span class="newtag">Mới</span>' : '') + '</span>' +
       '<span class="job-meta"><span>' + esc(t.people.join(', ')) + '</span>' + (cust ? '<span>' + esc(cust) + '</span>' : '') +
         '<span>Giao bởi ' + esc(t.byName) + ' · ' + dmy(t.date) + '</span></span>' +
       (t.canEdit ? '<span class="job-act"><button type="button" class="mv" data-tmv="' + esc(t.id) + '">Chuyển việc</button></span>' : '') +
@@ -2236,7 +2309,7 @@ function taskTable(items, mgr, seq){   // seq = true: cột Số là số thứ 
         '<td class="c-no"' + (seq ? ' title="Mã việc #G' + esc(t.no) + '">' + (seq === 'asc' ? ti + 1 : items.length - ti) : '>#G' + esc(t.no)) + '</td>' +
         '<td class="c-date">' + dmy(t.date) + '<small title="Người giao: ' + esc(t.byName) + '">bởi ' + esc(shortName(t.byName)) + '</small></td>' +
         '<td><span class="tag">' + esc(t.type) + '</span></td>' +
-        '<td class="c-desc"><span class="clamp" title="' + esc(t.desc) + '">' + esc(t.desc) + '</span></td>' +
+        '<td class="c-desc"><span class="clamp" title="' + esc(t.desc) + '">' + esc(t.desc) + '</span>' + (isNewTask(t) ? '<span class="newtag">Mới</span>' : '') + '</td>' +
         '<td>' + peopleCell(t.people) + '</td>' +
         '<td class="c-cust">' + (cust ? '<span class="clamp" title="' + esc(custFull) + '">' + esc(cust) + '</span>' : '<span class="hint">–</span>') + '</td>' +
         '<td>' + tStPill(t) + '</td>' +
@@ -2309,10 +2382,11 @@ function afterTaskSave(r, msg, plain){
   upsert(S.tasks, r.task);
   if (r.report) { upsert(S.dayItems, r.report); upsert(S.listItems, r.report); renderDay(); renderList(); }
   renderTasks();
-  toast(msg);
+  toast(msg, { ms: msg.length > 50 ? 6000 : 3200 });
 }
 async function taskQuickStatus(id, st){
   const t = findTask(id); if (!t || t.status === st) return;
+  if (t.mine) markSeen([t.id]);
   const d = Object.assign({}, t, { status: st, people: t.people.slice() });
   try { const r = await api('apiTaskSave', d); afterTaskSave(r, 'Đã cập nhật trạng thái thành công', true); }
   catch(e){ fail(e); }
@@ -2321,6 +2395,8 @@ async function taskQuickStatus(id, st){
 let tEditing = null, kDelT = 0;
 function openTask(t){
   tEditing = t || null;
+  if (t && t.mine) markSeen([t.id]);
+  $('#kMailWrap').hidden = !!t; $('#kMail').checked = false;   // ô gửi email chỉ có khi giao việc mới
   const isNew = !t, mgr = !!S.user.isMgr;
   $('#kTitle').textContent = isNew ? 'Giao việc' : (mgr ? 'Sửa việc giao #G' + t.no : 'Việc được giao #G' + t.no);
   $('#kTplWrap').hidden = !(isNew && S.templates.length);
@@ -2352,13 +2428,15 @@ $('#kTplRow').addEventListener('click', e => {
 $('#kSave').onclick = async () => {
   const d = TF.get(), isNew = !tEditing;
   if (tEditing) d.id = tEditing.id;
-  if (isNew) d.status = d.status || defTaskStatus();
+  if (isNew) { d.status = d.status || defTaskStatus(); d.sendMail = $('#kMail').checked; }
   if (isNew || S.user.isMgr) { d.date = todayISO(); const bad = checkItem(d); if (bad) { toast(bad); return; } }
   const b = $('#kSave'); b.disabled = true;
   try {
     const r = await api('apiTaskSave', d);
     closeTask();
-    afterTaskSave(r, isNew ? 'Đã giao việc cho ' + r.task.people.join(', ') : 'Đã lưu thành công');
+    if (isNew) markSeen([r.task.id]);   // việc mình vừa giao (kể cả giao cho chính mình) không tính là "mới"
+    afterTaskSave(r, isNew ? 'Đã giao việc cho ' + r.task.people.join(', ') + mailNote(r.mail) : 'Đã lưu thành công');
+    mailErr(r.mail);
   } catch(err){ fail(err); }
   finally { b.disabled = false; }
 };
@@ -2393,7 +2471,7 @@ function paintMove(){
       (i >= 0 ? '<span class="ord">' + (i + 1) + '</span>' : '') + esc(p) + '</button>'; }).join('');
 }
 function openMove(t){
-  mvTask = t; mvPick = [];
+  mvTask = t; mvPick = []; $('#mvMail').checked = false;
   $('#mvTitle').textContent = 'Chuyển việc #G' + t.no + (t.people.length ? ' (đang giao: ' + t.people.join(', ') + ')' : '');
   paintMove(); $('#moveModal').hidden = false;
 }
@@ -2411,9 +2489,11 @@ $('#mvOk').onclick = async () => {
   if (!mvPick.length) { toast('Chọn người nhận việc.'); return; }
   const b = $('#mvOk'); b.disabled = true;
   try {
-    const t = await api('apiTaskTransfer', mvTask.id, mvPick.slice());
+    const r = await api('apiTaskTransfer', mvTask.id, mvPick.slice(), $('#mvMail').checked);
+    const t = r && r.task ? r.task : r;   // máy chủ cũ trả về thẳng việc giao
     upsert(S.tasks, t); closeMove(); renderTasks();
-    toast('Đã chuyển việc cho ' + t.people.join(', '));
+    toast('Đã chuyển việc cho ' + t.people.join(', ') + mailNote(r && r.mail), { ms: 5000 });
+    mailErr(r && r.mail);
   } catch(err){ fail(err); }
   finally { b.disabled = false; }
 };
@@ -2458,15 +2538,18 @@ function renderTplRows(){
     '</div><button type="button" class="del-x" data-tdel="' + i + '" aria-label="Xoá mẫu">×</button></div>').join('')
     : '<div class="empty">Chưa có mẫu việc nào.</div>';
 }
+const OWNER_EMAILS = ['anhtuan22775@gmail.com'];   // chủ web: nút Bàn giao (tượng trưng)
+document.addEventListener('click', e => { if (e.target.closest('#btnHandover:not(:disabled)')) toast('Tính năng Bàn giao đang được xây dựng.'); });
 function renderUserRows(){
-  const me = S.user.email;
+  const me = S.user.email, owner = OWNER_EMAILS.indexOf(String(me).toLowerCase()) >= 0;
   $('#userRows').innerHTML = D.users.map((u, i) => {
     const self = u.email === me;
     return '<div class="trow"><div class="cells">' +
       '<input type="email" class="wide" id="uE' + i + '" data-u="' + i + '" data-f="email" value="' + esc(u.email) + '" placeholder="ten@gmail.com" aria-label="Email"' + (self ? ' readonly' : '') + '>' +
       '<input type="text" id="uN' + i + '" data-u="' + i + '" data-f="name" value="' + esc(u.name) + '" list="peopleList" placeholder="Họ tên" aria-label="Họ tên">' +
-      '<select id="uR' + i + '" data-u="' + i + '" data-f="role" aria-label="Vai trò"' + (self ? ' disabled' : '') + '>' +
+      '<div class="role-wrap"><select id="uR' + i + '" data-u="' + i + '" data-f="role" aria-label="Vai trò"' + (self ? ' disabled' : '') + '>' +
         ['Nhân viên','Quản lý','Admin'].map(r => '<option' + (u.role === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select>' +
+        (self ? '<button type="button" class="handover" id="btnHandover"' + (owner ? ' title="Bàn giao quyền quản trị (tượng trưng)"' : ' disabled title="Chỉ chủ web mới dùng được nút này"') + '>Bàn giao</button>' : '') + '</div>' +
     '</div><button type="button" class="del-x" data-udel="' + i + '" aria-label="Xoá người dùng"' + (self ? ' disabled title="Không thể tự xoá mình"' : '') + '>×</button></div>';
   }).join('');
 }
@@ -2826,6 +2909,7 @@ const Demo = (function(){
     return view(it);
   }
   function err(m){ throw new Error(m); }
+  function demoMail(names){ return { sent: names.filter(n => db.users.some(u => u.name === n)), missing: names.filter(n => !db.users.some(u => u.name === n)), error: '' }; }
   function apiInit(){ const u = me(); const o = { user: u, cats: db.cats, templates: db.templates, carried: carriedOnce }; carriedOnce = 0; if (u.isAdmin) o.users = db.users.map(x => ({ email: x.email, name: x.name, role: x.role })); return o; }
   return {
     setRole(r){ role = r; },
@@ -2849,13 +2933,15 @@ const Demo = (function(){
       if (!x.type) err('Vui lòng chọn loại việc.'); if (!x.desc) err('Vui lòng nhập mô tả công việc.'); if (!x.people || !x.people.length) err('Vui lòng chọn ít nhất 1 nhân sự.');
       const t = { id: 't' + (++tseq), no: tseq, date: T, type: x.type, status: x.status, desc: x.desc, people: x.people.slice(),
         company: x.company || '', cname: x.cname || '', contact: x.contact || '', via: x.via || '', by: ME };
-      db.tasks.push(t); return { task: tview(t), report: null };
+      db.tasks.push(t); return { task: tview(t), report: null, mail: x.sendMail ? demoMail(t.people) : null };
     },
-    apiTaskTransfer(id, ppl){
+    apiTaskTransfer(id, ppl, send){
       if (!me().isMgr) err('Chỉ Admin và Quản lý mới chuyển việc được.');
       const t = db.tasks.find(i => i.id === id); if (!t) err('Không tìm thấy việc giao (có thể đã bị xoá).');
       if (!ppl || !ppl.length) err('Chọn ít nhất 1 người nhận việc.');
-      t.people = ppl.slice(); return tview(t);
+      const before = t.people.slice(); t.people = ppl.slice();
+      const fresh = t.people.filter(p => before.indexOf(p) < 0);
+      return { task: tview(t), mail: send && fresh.length ? demoMail(fresh) : null };
     },
     apiTaskDelete(id){
       if (!me().isMgr) err('Chỉ Admin và Quản lý mới xoá việc giao được.');
