@@ -149,6 +149,11 @@ details.cust[open] summary::before{content:"–"}
 .date-pick .short{display:none}
 @media (max-width:480px){.date-pick .full{display:none}.date-pick .short{display:inline}}
 .date-pick small{line-height:1.1}
+.date-pick{padding-right:48px}
+.date-pick .cal{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:8px;display:grid;place-items:center;color:var(--sun);background:#FFF1E4;pointer-events:none;transition:background .15s}
+.date-pick .cal svg{width:19px;height:19px}
+.date-pick:hover .cal{background:var(--sun);color:#fff}
+@media (max-width:480px){.date-pick{padding:0 36px 0 10px}.date-pick .cal{right:4px;width:28px;height:28px}.date-pick .cal svg{width:16px;height:16px}.date-pick b{font-size:13.5px!important}}
 .date-pick input{position:absolute;inset:0;opacity:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;min-height:0}
 .datebar .btn.sm{min-height:44px}
 .tpl-row{display:flex;flex-wrap:wrap;gap:8px}
@@ -676,7 +681,7 @@ input,select,textarea{transition:border-color .16s ease,box-shadow .16s ease}
       <div class="col-form">
         <div class="datebar">
           <button type="button" class="icon-btn" id="dPrev" aria-label="Ngày trước">‹</button>
-          <label class="date-pick" id="dPick"><b><span class="full" id="dLabel"></span><span class="short" id="dLabelS"></span></b><small id="dSub"></small><input type="date" id="dInput" aria-label="Chọn ngày"></label>
+          <label class="date-pick" id="dPick"><b><span class="full" id="dLabel"></span><span class="short" id="dLabelS"></span></b><small id="dSub"></small><span class="cal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01"/></svg></span><input type="date" id="dInput" aria-label="Mở lịch chọn ngày" title="Mở lịch chọn ngày"></label>
           <button type="button" class="icon-btn" id="dNext" aria-label="Ngày sau">›</button>
           <button type="button" class="btn sm" id="dToday">Hôm nay</button>
         </div>
@@ -759,7 +764,7 @@ input,select,textarea{transition:border-color .16s ease,box-shadow .16s ease}
           <label class="f">Từ ngày<input type="date" id="xFrom"></label>
           <label class="f">Đến ngày<input type="date" id="xTo"></label>
         </div>
-        <div class="quick" id="xQuick">
+        <div class="quick" id="xQuick" style="display:none">
           <button type="button" data-q="today">Hôm nay</button><button type="button" data-q="yesterday">Hôm qua</button>
           <button type="button" data-q="7d">7 ngày</button><button type="button" data-q="month">Tháng này</button>
         </div>
