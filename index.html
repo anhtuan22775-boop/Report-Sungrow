@@ -87,7 +87,6 @@ main{max-width:1180px;margin:0 auto;padding-block:16px 104px;
 .f.via{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--ink-2);min-width:0;grid-column:1/-1}
 .f.via .chip{font-weight:500}
 div.f:not(.via){display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:600;color:var(--ink-2);min-width:0}
-#xPeople .chip{font-weight:500;min-height:34px;padding:5px 12px}
 label.f textarea{resize:vertical}
 label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--ink-2);min-width:0}
 input[type=text],input[type=email],input[type=date],input:not([type]),select,textarea{
@@ -293,8 +292,9 @@ table.xt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1120px;b
 .xt tbody tr:nth-child(even) td{background:var(--head)}
 .xt tbody tr:hover td{background:var(--sun-soft)}
 .xt td.dash{color:var(--faint);text-align:center}
-.xt .x-no{text-align:center;font-weight:700;width:46px;font-variant-numeric:tabular-nums}
-.xt .x-date{white-space:nowrap;font-variant-numeric:tabular-nums}
+.xt .x-no{text-align:center;font-weight:700;width:58px;min-width:58px;white-space:nowrap;overflow-wrap:normal;font-variant-numeric:tabular-nums}
+.xt .x-date{white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center}
+.xt th.c{text-align:center}
 .xt .x-type{white-space:nowrap;font-weight:600}
 .xt .x-desc{min-width:260px;font-weight:500}
 .xt .x-p{min-width:150px}
@@ -540,6 +540,22 @@ input,select,textarea{transition:border-color .16s ease,box-shadow .16s ease}
 .newtag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:6px;background:var(--bad);color:#fff;font-size:11px;font-weight:800;vertical-align:middle}
 .mailchk{display:flex;align-items:center;gap:8px;margin-top:14px;padding:10px 12px;border:1px dashed var(--line-2);border-radius:10px;font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer}
 .mailchk input{width:18px;height:18px;accent-color:var(--sun)}
+/* Ô chọn nhiều (bấm để xổ xuống) */
+.msel{position:relative;min-width:0}
+.msel-btn{width:100%;display:flex;align-items:center;gap:8px;min-height:44px;padding:9px 34px 9px 12px;border:1px solid var(--line-2);border-radius:10px;background:var(--card);color:var(--ink);font-size:14px;font-weight:400;text-align:left;cursor:pointer;position:relative}
+.msel-btn::after{content:"";position:absolute;right:14px;top:50%;margin-top:-3px;border:5px solid transparent;border-top-color:var(--ink-2);transition:transform .15s}
+.msel.open .msel-btn::after{transform:rotate(180deg);margin-top:-8px}
+.msel-btn .msel-txt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msel-btn.on{border-color:var(--sun);background:#FFF6EE;font-weight:600}
+.msel-n{flex:none;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:var(--sun);color:#fff;font-size:12px;font-weight:800;display:inline-grid;place-items:center}
+.msel-pop{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:45;background:var(--card);border:1px solid var(--line-2);border-radius:12px;box-shadow:0 12px 32px rgba(31,35,41,.16);padding:6px;max-height:280px;overflow:auto}
+.msel-opt{width:100%;display:flex;align-items:center;gap:10px;border:0;background:none;padding:9px 10px;border-radius:8px;font-size:14px;color:var(--ink);text-align:left;cursor:pointer}
+.msel-opt:hover{background:var(--head)}
+.msel-opt.on{background:#FFE9D6;font-weight:700}
+.msel-opt .ck{flex:none;width:18px;height:18px;border:1.5px solid var(--line-2);border-radius:5px;display:grid;place-items:center;background:var(--card)}
+.msel-opt.on .ck{background:var(--sun);border-color:var(--sun)}
+.msel-opt.on .ck::after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);margin-top:-2px}
+.msel-opt.all{border-bottom:1px solid var(--line);border-radius:8px 8px 0 0;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -747,7 +763,9 @@ input,select,textarea{transition:border-color .16s ease,box-shadow .16s ease}
           <button type="button" data-q="today">Hôm nay</button><button type="button" data-q="yesterday">Hôm qua</button>
           <button type="button" data-q="7d">7 ngày</button><button type="button" data-q="month">Tháng này</button>
         </div>
-        <div class="f"><span>Nhân sự <small class="hint" style="font-weight:400">Có thể chọn nhiều người</small></span><div class="choices" id="xPeople"></div></div>
+        <div class="f"><span>Nhân sự</span><div class="msel" id="xmPeople"></div></div>
+        <div class="f"><span>Trạng thái</span><div class="msel" id="xmStatus"></div></div>
+        <div class="f"><span>Loại việc</span><div class="msel" id="xmType"></div></div>
         <label class="f">Kiểu ảnh<select id="xMode">
           <option value="table">Dạng xem trên máy tính</option>
           <option value="cards">Dạng thẻ xem trên điện thoại</option>
@@ -1294,7 +1312,8 @@ function renderDay(){
   if (!wideMQ.matches) { $('#dayList').innerHTML = items.map((it, i) => jobCard(it, items.length - i - 1)).join('') + tBlock; return; }
   const cell = (v, cls) => v ? '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(v) + '</td>' : '<td class="dash">-</td>';
   $('#dayList').innerHTML = '<div class="tbl-wrap"><table class="xt"><thead><tr>' +
-    ['No','Time','Type','Status','Describe','Personnel','Công ty','Tên người liên hệ','Ghi chú'].map(h => '<th>' + h + '</th>').join('') +
+    [['STT','c'],['Ngày','c'],['Loại việc'],['Trạng thái','c'],['Mô tả'],['Người thực hiện','c'],['Công ty','c'],['Tên người liên hệ'],['Ghi chú']]
+      .map(h => '<th' + (h[1] ? ' class="' + h[1] + '"' : '') + '>' + h[0] + '</th>').join('') +
     '</tr></thead><tbody>' + items.map((it, i) => '<tr data-id="' + esc(it.id) + '" title="Việc #' + esc(it.no) + ' – bấm để ' + (it.canEdit ? 'sửa' : 'xem') + '">' +
       '<td class="x-no">' + (items.length - i) + '</td>' +
       '<td class="x-date">' + dmy(it.date) + '</td>' +
@@ -1439,23 +1458,51 @@ function fillPeopleSelect(sel, keep){
   sel.innerHTML = '<option value="">Tất cả nhân sự</option>' + S.cats.people.map(p => '<option>' + esc(p) + '</option>').join('');
   sel.value = S.cats.people.indexOf(v) >= 0 ? v : '';
 }
-/* Xuất báo cáo: chọn nhiều nhân sự (không chọn = tất cả) */
-let xPick = [];
-function renderXPeople(){
-  xPick = xPick.filter(p => S.cats.people.indexOf(p) >= 0);
-  const all = !xPick.length;
-  $('#xPeople').innerHTML = '<button type="button" class="chip' + (all ? ' on' : '') + '" data-xp="" aria-pressed="' + all + '">Tất cả</button>' +
-    S.cats.people.map(p => { const on = xPick.indexOf(p) >= 0;
-      return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-xp="' + esc(p) + '" aria-pressed="' + on + '">' + esc(p) + '</button>'; }).join('');
+/* Ô chọn nhiều kiểu xổ xuống: bấm để mở danh sách, tích nhiều mục, mục đã chọn được tô màu. Không chọn = tất cả. */
+const MSELS = [];
+function MSel(el, allLabel, unit){
+  this.el = el; this.allLabel = allLabel; this.unit = unit; this.opts = []; this.pick = [];
+  el.innerHTML = '<button type="button" class="msel-btn" aria-haspopup="listbox" aria-expanded="false"><span class="msel-txt"></span><span class="msel-n" hidden></span></button>' +
+    '<div class="msel-pop" role="listbox" aria-multiselectable="true" hidden></div>';
+  this.btn = el.firstChild; this.pop = el.lastChild;
+  this.btn.addEventListener('click', () => this.toggle());
+  this.pop.addEventListener('click', e => {
+    e.stopPropagation();   // danh sách được vẽ lại sau mỗi lần bấm -> không để sự kiện "bấm ra ngoài" đóng nó
+    const b = e.target.closest('[data-v]'); if (!b) return;
+    const v = b.dataset.v;
+    if (v === '') this.pick = []; else { const i = this.pick.indexOf(v); if (i >= 0) this.pick.splice(i, 1); else this.pick.push(v); }
+    this.paint();
+  });
+  MSELS.push(this);
 }
-$('#xPeople').addEventListener('click', e => {
-  const b = e.target.closest('[data-xp]'); if (!b) return;
-  const v = b.dataset.xp;
-  if (!v) xPick = []; else { const i = xPick.indexOf(v); if (i >= 0) xPick.splice(i, 1); else xPick.push(v); }
-  renderXPeople();
-});
+MSel.prototype.setOptions = function(list){ this.opts = list.slice(); this.pick = this.pick.filter(x => this.opts.indexOf(x) >= 0); this.paint(); };
+MSel.prototype.toggle = function(open){
+  const on = open != null ? open : this.pop.hidden;
+  if (on) MSELS.forEach(m => { if (m !== this) m.toggle(false); });
+  this.pop.hidden = !on; this.el.classList.toggle('open', on); this.btn.setAttribute('aria-expanded', String(on));
+};
+MSel.prototype.paint = function(){
+  const n = this.pick.length;
+  $('.msel-txt', this.el).textContent = !n ? this.allLabel : n === 1 ? this.pick[0] : this.pick.join(', ');
+  const nb = $('.msel-n', this.el); nb.hidden = n < 2; nb.textContent = n;
+  this.btn.classList.toggle('on', n > 0);
+  this.btn.title = n ? 'Đang chọn ' + n + ' ' + this.unit + ': ' + this.pick.join(', ') : this.allLabel;
+  this.pop.innerHTML = '<button type="button" class="msel-opt all' + (!n ? ' on' : '') + '" data-v="" role="option" aria-selected="' + !n + '"><span class="ck"></span>' + esc(this.allLabel) + '</button>' +
+    this.opts.map(o => { const on = this.pick.indexOf(o) >= 0;
+      return '<button type="button" class="msel-opt' + (on ? ' on' : '') + '" data-v="' + esc(o) + '" role="option" aria-selected="' + on + '"><span class="ck"></span>' + esc(o) + '</button>'; }).join('');
+};
+document.addEventListener('click', e => { if (!e.target.closest('.msel')) MSELS.forEach(m => m.toggle(false)); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') MSELS.forEach(m => m.toggle(false)); });
+const XM = {
+  people: new MSel($('#xmPeople'), 'Tất cả nhân sự', 'nhân sự'),
+  status: new MSel($('#xmStatus'), 'Tất cả trạng thái', 'trạng thái'),
+  type: new MSel($('#xmType'), 'Tất cả loại việc', 'loại việc')
+};
+function renderXFilters(){ XM.people.setOptions(S.cats.people); XM.status.setOptions(S.cats.statuses); XM.type.setOptions(S.cats.types); }
+/* Dòng mô tả bộ lọc ghi lên ảnh / Excel */
+const filtText = o => [o.person ? 'Nhân sự: ' + o.person : '', o.status ? 'Trạng thái: ' + o.status : '', o.type ? 'Loại việc: ' + o.type : ''].filter(Boolean).join('   ·   ');
 function fillFilters(){
-  fillPeopleSelect($('#lPerson')); renderXPeople(); fillPeopleSelect($('#dPerson'));
+  fillPeopleSelect($('#lPerson')); renderXFilters(); fillPeopleSelect($('#dPerson'));
   const ds = $('#dStatus'), dv = ds.value;
   ds.innerHTML = '<option value="">Tất cả trạng thái</option>' + S.cats.statuses.map(x => '<option>' + esc(x) + '</option>').join('');
   ds.value = S.cats.statuses.indexOf(dv) >= 0 ? dv : '';
@@ -1802,7 +1849,7 @@ async function buildImages(items, o){
   const head = {
     title: o.title || 'BÁO CÁO CÔNG VIỆC NGÀY',
     rangeText: multi ? 'Từ ' + fmtDay(o.from) + ' đến ' + fmtDay(o.to) : fmtDay(o.from),
-    metaText: (o.person ? 'Nhân sự: ' + o.person : 'Tất cả nhân sự') + ' · ' + items.length + ' việc' + (multi ? ' · ' + dates.length + ' ngày có việc' : '')
+    metaText: (filtText(o).replace(/   ·   /g, ' · ') || 'Tất cả nhân sự') + ' · ' + items.length + ' việc' + (multi ? ' · ' + dates.length + ' ngày có việc' : '')
   };
   const out = [];
   const scale = 1; // 1080px thật
@@ -1829,11 +1876,11 @@ async function buildTableImages(items, o){
   const W = 2200, P = 40, MAXH = 2600, FOOT = 80, FS = 21, LH = 29, CP = 12;
   const ctx0 = document.createElement('canvas').getContext('2d'); ctx0.textBaseline = 'top';
   let cols = [
-    { k: 'no', h: 'No.', w: 60, al: 'c' }, { k: 'date', h: 'Time', w: 175, al: 'c' }, { k: 'type', h: 'Type', w: 150, al: 'c' },
-    { k: 'status', h: 'Status', w: 175, al: 'c' }, { k: 'desc', h: 'Describe', w: 0, max: 6 },
-    { k: 'ppl', h: 'Personnel', w: 260, max: 8 }
+    { k: 'no', h: 'STT', w: 70, al: 'c', ha: 'c' }, { k: 'date', h: 'Ngày', w: 175, al: 'c', ha: 'c' }, { k: 'type', h: 'Loại việc', w: 160 },
+    { k: 'status', h: 'Trạng thái', w: 175, al: 'c', ha: 'c' }, { k: 'desc', h: 'Mô tả', w: 0, max: 6 },
+    { k: 'ppl', h: 'Người thực hiện', w: 260, max: 8, ha: 'c' }
   ];
-  if (o.cust) cols = cols.concat([{ k: 'company', h: 'Company', w: 190, max: 4 }, { k: 'cname', h: 'Người liên hệ', w: 150, max: 3 }, { k: 'contact', h: 'Ghi chú', w: 280, max: 4 }]);
+  if (o.cust) cols = cols.concat([{ k: 'company', h: 'Công ty', w: 190, max: 4, ha: 'c' }, { k: 'cname', h: 'Người liên hệ', w: 150, max: 3 }, { k: 'contact', h: 'Ghi chú', w: 280, max: 4 }]);
   const fixed = cols.reduce((a, c) => a + c.w, 0);
   cols.find(c => c.k === 'desc').w = W - 2 * P - fixed;
   let x = P; cols.forEach(c => { c.x = x; x += c.w; });
@@ -1877,7 +1924,7 @@ async function buildTableImages(items, o){
   const now = new Date(), stamp = p2(now.getHours()) + ':' + p2(now.getMinutes()) + ', ' + dmy(iso(now));
   const multi = o.from !== o.to;
   const title = o.title || 'BÁO CÁO CÔNG VIỆC NGÀY';
-  const rangeText = (multi ? 'Từ ' + fmtDay(o.from) + ' đến ' + fmtDay(o.to) : fmtDay(o.from)) + (o.person ? '   ·   Nhân sự: ' + o.person : '');
+  const rangeText = (multi ? 'Từ ' + fmtDay(o.from) + ' đến ' + fmtDay(o.to) : fmtDay(o.from)) + (filtText(o) ? '   ·   ' + filtText(o) : '');
 
   function txt(ctx, s, x, y, f, color, al){ ctx.font = f; ctx.fillStyle = color; ctx.textAlign = al || 'left'; ctx.fillText(s, x, y); ctx.textAlign = 'left'; }
   function box(ctx, x, y, w, h, fill){ if (fill) { ctx.fillStyle = fill; ctx.fillRect(x, y, w, h); } ctx.strokeStyle = C.line2; ctx.lineWidth = 1.5; ctx.strokeRect(x + .75, y + .75, w - 1.5, h - 1.5); }
@@ -1926,7 +1973,7 @@ async function buildTableImages(items, o){
     // nhãn bảng + dòng tiêu đề cột
     txt(ctx, 'BẢNG CÔNG VIỆC CHI TIẾT' + (first ? '' : ' (tiếp)'), P, y + 6, fnt(800, 25), C.ink);
     y += LABEL;
-    cols.forEach(c => { box(ctx, c.x, y, c.w, HDR, C.sunLight); cellText(ctx, c.h, c.x, y, c.w, HDR, fnt(800, 21), C.ink, 'c'); });
+    cols.forEach(c => { box(ctx, c.x, y, c.w, HDR, C.sunLight); cellText(ctx, c.h, c.x, y, c.w, HDR, fnt(800, 21), C.ink, 'c'); });   // mọi tiêu đề cột căn giữa
     // các dòng
     pg.rows.forEach((r, ri) => {
       const zebra = ri % 2 ? C.head : '#FFFFFF';
@@ -1972,13 +2019,15 @@ async function exportData(){
   let f = $('#xFrom').value, t = $('#xTo').value;
   if (!f || !t) { toast('Chọn khoảng ngày.'); return null; }
   if (f > t) { const x = f; f = t; t = x; $('#xFrom').value = f; $('#xTo').value = t; }
-  const pick = xPick.slice(), person = pick.join(', ');
+  const pp = XM.people.pick.slice(), ps = XM.status.pick.slice(), pt = XM.type.pick.slice();
   let items = await api('apiList', f, t);
-  if (pick.length) items = items.filter(i => i.people.some(p => pick.indexOf(p) >= 0));
-  const opt = { from: f, to: t, person: person, title: $('#xTitle').value.trim(), cust: $('#xCust').checked };
+  if (pp.length) items = items.filter(i => i.people.some(p => pp.indexOf(p) >= 0));
+  if (ps.length) items = items.filter(i => ps.indexOf(i.status) >= 0);
+  if (pt.length) items = items.filter(i => pt.indexOf(i.type) >= 0);
+  const opt = { from: f, to: t, person: pp.join(', '), status: ps.join(', '), type: pt.join(', '), title: $('#xTitle').value.trim(), cust: $('#xCust').checked };
   return { items: items, opt: opt, base: 'BaoCao_' + f.replace(/-/g, '') + (t !== f ? '-' + t.replace(/-/g, '') : '') };
 }
-const emptyMsg = o => 'Không có công việc nào từ ' + dmy(o.from) + ' đến ' + dmy(o.to) + (o.person ? ' của ' + o.person : '') + '.';
+const emptyMsg = o => 'Không có công việc nào từ ' + dmy(o.from) + ' đến ' + dmy(o.to) + (o.person || o.status || o.type ? ' khớp bộ lọc đã chọn' : '') + '.';
 
 $('#xMake').onclick = async () => {
   const btn = $('#xMake'); btn.disabled = true; btn.textContent = 'Đang tạo ảnh…';
@@ -2088,7 +2137,7 @@ function buildXlsx(items, o){
   const sTot = xf(3, 0, 1, 'left'), sTotV = xf(5, 0, 1, 'center');
   const sStL = {}, sStV = {}, sStCell = {};
   KEYS.forEach((k, i) => { sStL[k] = xf(4, 7 + i, 1, 'left'); sStV[k] = xf(6 + i, 0, 1, 'center'); sStCell[k] = xf(4, 7 + i, 1, 'center', true); });
-  const sSec = xf(5, 0, 0, 'left'), sTh = xf(3, 5, 1, 'center', true);
+  const sSec = xf(5, 0, 0, 'left'), sTh = xf(3, 5, 1, 'center', true), sThL = xf(3, 5, 1, 'left', true);
   const sTxt = [xf(0, 0, 1, 'left', true), xf(0, 6, 1, 'left', true)];
   const sCen = [xf(0, 0, 1, 'center', true), xf(0, 6, 1, 'center', true)];
   const sDt = [xf(0, 0, 1, 'center', false, 164), xf(0, 6, 1, 'center', false, 164)];
@@ -2103,8 +2152,9 @@ function buildXlsx(items, o){
     '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
 
   // ---- cột ----
-  let cols = [['No.', 6], ['Time', 12], ['Type', 13], ['Status', 16], ['Describe', 50], ['Personnel', 28]];
-  if (o.cust) cols = cols.concat([['Company', 26], ['Người liên hệ', 18], ['Ghi chú', 36]]);
+  // [tiêu đề, độ rộng, căn tiêu đề] – 'l' = căn trái, còn lại căn giữa
+  let cols = [['STT', 6], ['Ngày', 12], ['Loại việc', 14, 'l'], ['Trạng thái', 16], ['Mô tả', 50, 'l'], ['Người thực hiện', 28]];
+  if (o.cust) cols = cols.concat([['Công ty', 26], ['Người liên hệ', 18, 'l'], ['Ghi chú', 36, 'l']]);
   const last = XL.colName(cols.length - 1);
   const rows = [], merges = [];
   let r = 0;
@@ -2124,11 +2174,13 @@ function buildXlsx(items, o){
 
   const multi = o.from !== o.to;
   bandRow(o.title || 'BÁO CÁO CÔNG VIỆC NGÀY', sTitle, 32);
-  bandRow((multi ? 'Từ ' + fmtDay(o.from) + ' đến ' + fmtDay(o.to) : fmtDay(o.from)) + (o.person ? '   ·   Nhân sự: ' + o.person : ''), sSub, 22);
+  bandRow((multi ? 'Từ ' + fmtDay(o.from) + ' đến ' + fmtDay(o.to) : fmtDay(o.from)) + (filtText(o) ? '   ·   ' + filtText(o) : ''), sSub, 22);
   r++; row([]);
   kv('Từ ngày', XL.serial(o.from), sLbl, sDate, 'n');
   kv('Đến ngày', XL.serial(o.to), sLbl, sDate, 'n');
   kv('Nhân sự', o.person || 'Tất cả nhân sự', sLbl, sVal, 's', true);
+  if (o.status) kv('Trạng thái', o.status, sLbl, sVal, 's', true);
+  if (o.type) kv('Loại việc', o.type, sLbl, sVal, 's', true);
   r++; row([]);
   // Kết quả làm việc
   const by = {}; items.forEach(i => { by[i.status] = (by[i.status] || 0) + 1; });
@@ -2139,13 +2191,13 @@ function buildXlsx(items, o){
   r++; row([]);
   // Bảng chi tiết
   r++; row([cell(0, 'BẢNG CÔNG VIỆC CHI TIẾT', sSec)], 22);
-  r++; row(cols.map((c, i) => cell(i, c[0], sTh)), 22);
+  r++; row(cols.map((c, i) => cell(i, c[0], sTh)), 22);   // mọi tiêu đề cột căn giữa
   const headRow = r;
   const list = items.slice().sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.no - b.no);
   list.forEach((it, i) => {
     r++;
     const z = i % 2;
-    const vals = [[i + 1, sCen[z], 'n'], [XL.serial(it.date), sDt[z], 'n'], [it.type, sCen[z]], [it.status, sStCell[stKey(it.status)]],
+    const vals = [[i + 1, sCen[z], 'n'], [XL.serial(it.date), sDt[z], 'n'], [it.type, sTxt[z]], [it.status, sStCell[stKey(it.status)]],
       [descImg(it), sTxt[z]], [it.people.join('\n'), sTxt[z]]];
     if (o.cust) vals.push([it.company, sTxt[z]], [it.cname, sTxt[z]], [noteText(it), sTxt[z]]);
     // ước lượng chiều cao dòng (tối thiểu 2 dòng chữ)
