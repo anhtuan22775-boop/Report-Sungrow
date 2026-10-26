@@ -103,6 +103,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink);box
 .btn.dark{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
 .btn.ghost{background:transparent}
 .btn.danger{background:var(--card);border-color:#EBB8B3;color:var(--bad)}
+.btn.primary.armed{background:var(--bad);border-color:var(--bad)}
+.day-warn{flex-basis:100%;font-size:13px;font-weight:600;color:var(--bad);background:#FDECEA;border-radius:8px;padding:8px 10px}
 .btn.danger.armed{background:var(--bad);border-color:var(--bad);color:var(--on-ink)}
 .btn.sm{min-height:36px;padding:6px 12px;font-size:13.5px}
 .btn:disabled{opacity:.55;cursor:default}
@@ -130,7 +132,7 @@ details.cust summary::before{content:"+";display:inline-grid;place-items:center;
 details.cust[open] summary::before{content:"–"}
 .cust-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding-bottom:12px}
 .cust-grid .wide{grid-column:1/-1}
-.form-actions{display:flex;gap:10px;align-items:center}
+.form-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .form-actions .btn{flex:1}
 .kbd-hint{font-size:12px;color:var(--faint);display:none}
 @media (min-width:900px){.kbd-hint{display:inline}.form-actions .btn{flex:none;min-width:180px}}
@@ -653,6 +655,7 @@ input,select,textarea{transition:border-color .16s ease,box-shadow .16s ease}
           <div class="form-actions">
             <button type="submit" class="btn primary" id="btnSaveNew">Lưu việc</button>
             <span class="kbd-hint">hoặc Ctrl + Enter</span>
+            <div class="day-warn" id="nDayWarn" hidden></div>
           </div>
         </form>
       </div>
@@ -1197,7 +1200,29 @@ function renderDate(){
   $('#dSub').textContent = S.day === t ? 'Hôm nay' : S.day === addDays(t, -1) ? 'Hôm qua' : S.day === addDays(t, 1) ? 'Ngày mai' : 'Ngày đang chọn';
   $('#dInput').value = S.day;
   $('#dToday').disabled = S.day === t;
+  // Nhắc rõ khi đang nhập cho ngày khác hôm nay
+  const w = $('#nDayWarn');
+  w.hidden = S.day === t;
+  if (S.day !== t) w.textContent = '⚠ Bạn đang nhập cho ngày ' + dmy(S.day) + ', không phải hôm nay (' + dmy(t) + ').';
 }
+/* Qua ngày mới khi trang vẫn mở (để máy qua đêm, mở lại tab cũ...):
+   nếu đang xem "Hôm nay" thì tự chuyển sang ngày mới. */
+let lastToday = todayISO();
+function checkNewDay(){
+  const t = todayISO(); if (t === lastToday) return false;
+  const old = lastToday; lastToday = t;
+  if (!S.user) return false;
+  let moved = false;
+  if (S.day === old) { S.day = t; loadDay(); moved = true; } else renderDate();
+  if ($('#xFrom').value === old && $('#xTo').value === old) { $('#xFrom').value = t; $('#xTo').value = t; markQuick($('#xQuick'), t, t); }
+  if (moved) toast('Đã sang ngày mới ' + dmy(t) + ' – trang tự chuyển sang hôm nay.', { ms: 5000 });
+  return moved;
+}
+setInterval(checkNewDay, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkNewDay(); });
+window.addEventListener('focus', checkNewDay);
+let saveArmT = 0;
+function disarmSave(){ clearTimeout(saveArmT); const b = $('#btnSaveNew'); b.classList.remove('armed'); b.textContent = 'Lưu việc'; }
 let dayReq = 0;
 async function loadDay(){
   renderDate();
@@ -1270,7 +1295,7 @@ $('#dayStats').addEventListener('click', e => {
 });
 $('#dPerson').addEventListener('change', () => renderDay());
 $('#dStatus').addEventListener('change', () => renderDay());
-function setDay(d){ if (!d || d === S.day) return; S.day = d; loadDay(); }
+function setDay(d){ if (!d || d === S.day) return; S.day = d; disarmSave(); loadDay(); }
 $('#dPrev').onclick = () => setDay(addDays(S.day, -1));
 $('#dNext').onclick = () => setDay(addDays(S.day, 1));
 $('#dToday').onclick = () => setDay(todayISO());
@@ -1309,10 +1334,19 @@ function resetNewForm(){
 }
 $('#fNew').addEventListener('submit', async e => {
   e.preventDefault();
+  checkNewDay();   // trang để từ hôm trước: tự chuyển sang hôm nay trước khi lưu
   const d = NF.get(); d.date = S.day;
   const bad = checkItem(d);
   if (bad) { toast(bad); return; }
-  const btn = $('#btnSaveNew'); btn.disabled = true; btn.textContent = 'Đang lưu…';
+  const btn = $('#btnSaveNew');
+  // Lưu vào ngày khác hôm nay: cảnh báo, bấm lần nữa mới lưu
+  if (S.day !== todayISO() && !btn.classList.contains('armed')) {
+    btn.classList.add('armed'); btn.textContent = 'Lưu vào ngày ' + dmy(S.day).slice(0, 5);
+    toast('Bạn đang lưu vào ngày ' + dmy(S.day).slice(0, 5) + ', không phải hôm nay. Bấm Lưu lần nữa để xác nhận.', { err: true, ms: 6000 });
+    clearTimeout(saveArmT); saveArmT = setTimeout(disarmSave, 6000); return;
+  }
+  disarmSave();
+  btn.disabled = true; btn.textContent = 'Đang lưu…';
   try {
     const r = await api('apiSave', d);
     upsert(S.dayItems, r); renderDay();
